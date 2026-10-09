@@ -32,6 +32,23 @@
   --font-heading: "Space Grotesk", system-ui, sans-serif;
   --font-body: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Safe Area Inset Fallbacks */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* ==========================================================================
+   MOBILE SHADOW & TOKEN SCALING (< 640px)
+   ========================================================================== */
+@media (max-width: 639.98px) {
+  :root {
+    --shadow-sm: 2px 2px 0 var(--border);
+    --shadow-lg: 3px 3px 0 var(--border);
+    --shadow-hover: 3px 3px 0 var(--border);
+  }
 }
 
 /* ==========================================================================
@@ -52,6 +69,14 @@
   --shadow-hover: 6px 6px 0 #FFFFFF;
 }
 
+@media (max-width: 639.98px) {
+  [data-theme='dark'] {
+    --shadow-sm: 2px 2px 0 #FFFFFF;
+    --shadow-lg: 3px 3px 0 #FFFFFF;
+    --shadow-hover: 3px 3px 0 #FFFFFF;
+  }
+}
+
 /* ==========================================================================
    OFFICIAL GDG LOGO STYLING
    ========================================================================== */
@@ -63,11 +88,13 @@
   filter: none !important; /* Keep authentic logo colors identical in light and dark mode */
 }
 
-.gdg-logo:hover {
-  transform: scale(1.03);
+@media (hover: hover) and (pointer: fine) {
+  .gdg-logo:hover {
+    transform: scale(1.03);
+  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639.98px) {
   .gdg-logo {
     width: 58px !important;
     height: 31px !important;

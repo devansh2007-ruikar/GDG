@@ -45,13 +45,13 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="container" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
+    <div className="container" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 1.5rem)' }}>
       <div 
         className="card" 
         style={{ 
           width: '100%', 
           maxWidth: 460, 
-          padding: '2.5rem',
+          padding: 'clamp(1.25rem, 5vw, 2.5rem)',
           border: '3px solid var(--border)',
           boxShadow: 'var(--shadow-lg)',
           borderRadius: 0,
@@ -81,7 +81,7 @@ export const LoginPage = () => {
               <KeyRound size={12} /> AUTHENTICATION
             </div>
           </div>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem', lineHeight: 1.1 }}>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem', lineHeight: 1.1 }}>
             Member Sign In
           </h1>
           <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.925rem' }}>
@@ -101,6 +101,8 @@ export const LoginPage = () => {
             <label className="form-label">EMAIL ADDRESS</label>
             <input
               type="email"
+              autoComplete="email"
+              inputMode="email"
               className="input"
               placeholder="user1@gdg.com"
               value={email}
@@ -113,6 +115,7 @@ export const LoginPage = () => {
             <label className="form-label">PASSWORD</label>
             <input
               type="password"
+              autoComplete="current-password"
               className="input"
               placeholder="••••••••"
               value={password}
@@ -125,7 +128,7 @@ export const LoginPage = () => {
             type="submit"
             disabled={loading}
             className="btn btn-blue"
-            style={{ width: '100%', marginTop: '0.5rem', height: 48, justifyContent: 'center' }}
+            style={{ width: '100%', marginTop: '0.5rem', minHeight: 48, height: 48, justifyContent: 'center' }}
           >
             {loading ? <span className="spinner"></span> : <><LogIn size={16} /> SIGN IN</>}
           </button>
@@ -151,7 +154,7 @@ export const LoginPage = () => {
               type="button" 
               onClick={() => handleFillDemo('admin@gdg.com', 'Admin@123')}
               className="btn btn-outline btn-sm"
-              style={{ fontSize: '0.75rem' }}
+              style={{ fontSize: '0.75rem', minHeight: 44, padding: '0.4rem 0.85rem' }}
             >
               Fill Admin
             </button>
@@ -159,7 +162,7 @@ export const LoginPage = () => {
               type="button" 
               onClick={() => handleFillDemo('user1@gdg.com', 'User@123')}
               className="btn btn-outline btn-sm"
-              style={{ fontSize: '0.75rem' }}
+              style={{ fontSize: '0.75rem', minHeight: 44, padding: '0.4rem 0.85rem' }}
             >
               Fill Attendee
             </button>

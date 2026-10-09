@@ -110,8 +110,65 @@ export const EventDetailPage = () => {
     }
   };
 
+  const renderActionButton = (isFullWidth = false) => {
+    const btnStyle = isFullWidth 
+      ? { width: '100%', minHeight: 48, fontSize: '1rem', justifyContent: 'center' } 
+      : { minWidth: 220, minHeight: 48 };
+
+    if (!user) {
+      return (
+        <Link to="/login" className="btn btn-primary btn-lg" style={btnStyle}>
+          🔑 LOGIN TO REGISTER
+        </Link>
+      );
+    }
+    if (event.isRegistered) {
+      return (
+        <button
+          onClick={handleUnregister}
+          disabled={actionLoading || isPast}
+          className="btn btn-red btn-lg"
+          style={btnStyle}
+        >
+          {actionLoading ? <span className="spinner"></span> : '✕ CANCEL REGISTRATION'}
+        </button>
+      );
+    }
+    if (isPast) {
+      return (
+        <button disabled className="btn btn-outline btn-lg" style={btnStyle}>
+          EVENT CONCLUDED
+        </button>
+      );
+    }
+    if (isFull) {
+      return (
+        <button disabled className="btn btn-red btn-lg" style={{ ...btnStyle, opacity: 0.7 }}>
+          EVENT FULL (0 SEATS)
+        </button>
+      );
+    }
+    return (
+      <button
+        onClick={handleRegister}
+        disabled={actionLoading}
+        className="btn btn-green btn-lg"
+        style={btnStyle}
+      >
+        {actionLoading ? <span className="spinner"></span> : '🎟️ REGISTER NOW'}
+      </button>
+    );
+  };
+
   return (
-    <div className="container" style={{ padding: '3rem 1.5rem 5rem', maxWidth: 920 }}>
+    <div 
+      className="container" 
+      style={{ 
+        paddingTop: 'clamp(1.5rem, 4vw, 3rem)', 
+        paddingBottom: 'clamp(5rem, 10vw, 7rem)', 
+        maxWidth: 920 
+      }}
+    >
       {/* Back Link */}
       <Link 
         to="/events" 
@@ -121,18 +178,19 @@ export const EventDetailPage = () => {
           gap: '0.5rem', 
           fontFamily: 'var(--font-mono)',
           fontWeight: 700,
-          fontSize: '0.9rem', 
+          fontSize: '0.875rem', 
           color: 'var(--text)', 
-          marginBottom: '1.75rem',
+          marginBottom: '1.5rem',
+          minHeight: 44,
         }}
       >
         <ArrowLeft size={16} /> BACK TO EVENTS
       </Link>
 
-      {/* Big Bordered Task Panel */}
+      {/* Main Event Card Panel */}
       <div 
         style={{ 
-          border: '3px solid var(--border)', 
+          border: '2px solid var(--border)', 
           boxShadow: 'var(--shadow-lg)', 
           borderRadius: 0,
           overflow: 'hidden',
@@ -143,13 +201,13 @@ export const EventDetailPage = () => {
         <div 
           style={{ 
             backgroundColor: 'var(--header-tint)', 
-            padding: '2.5rem 2rem', 
-            borderBottom: '3px solid var(--border)',
+            padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)', 
+            borderBottom: '2px solid var(--border)',
           }}
         >
           {/* Badge & Registration Status Tag */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-            <span className={`badge ${getCategoryClass(event.category)}`} style={{ fontSize: '0.825rem', padding: '0.35rem 0.85rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.65rem' }}>
+            <span className={`badge ${getCategoryClass(event.category)}`} style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}>
               {event.category}
             </span>
 
@@ -168,7 +226,7 @@ export const EventDetailPage = () => {
                 style={{ 
                   fontFamily: 'var(--font-mono)', 
                   fontWeight: 700, 
-                  fontSize: '0.85rem',
+                  fontSize: '0.825rem',
                   color: seatsLeftPercentage <= 30 ? 'var(--red)' : 'var(--green)',
                   backgroundColor: 'var(--surface)',
                   padding: '0.3rem 0.65rem',
@@ -186,11 +244,11 @@ export const EventDetailPage = () => {
           <h1 
             style={{ 
               fontFamily: 'var(--font-heading)',
-              fontSize: '2.8rem', 
+              fontSize: 'clamp(1.6rem, 5vw, 2.7rem)', 
               fontWeight: 700, 
               letterSpacing: '-0.02em',
               lineHeight: 1.1, 
-              marginBottom: '1.25rem',
+              marginBottom: '1rem',
               color: 'var(--text)',
             }}
           >
@@ -203,7 +261,7 @@ export const EventDetailPage = () => {
               fontFamily: 'var(--font-mono)',
               color: 'var(--muted)', 
               lineHeight: 1.7, 
-              fontSize: '1.05rem', 
+              fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', 
               whiteSpace: 'pre-wrap',
             }}
           >
@@ -212,63 +270,63 @@ export const EventDetailPage = () => {
         </div>
 
         {/* Details & Capacity Section */}
-        <div style={{ padding: '2.5rem 2rem' }}>
-          {/* Metadata Grid */}
+        <div style={{ padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)' }}>
+          {/* Metadata Grid (Stacked list on mobile, grid on tablet/desktop) */}
           <div 
             style={{ 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
-              gap: '1.25rem', 
-              marginBottom: '2.25rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', 
+              gap: '1rem', 
+              marginBottom: '2rem',
             }}
           >
             <div 
               style={{ 
-                padding: '1.25rem', 
+                padding: '1rem 1.25rem', 
                 border: '2px solid var(--border)', 
                 boxShadow: 'var(--shadow-sm)',
                 borderRadius: 'var(--radius-btn)',
                 backgroundColor: 'var(--bg)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.785rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
                 <Calendar size={14} color="var(--blue)" /> DATE & TIME
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem' }}>
                 {formatDate(event.dateTime)}
               </div>
             </div>
 
             <div 
               style={{ 
-                padding: '1.25rem', 
+                padding: '1rem 1.25rem', 
                 border: '2px solid var(--border)', 
                 boxShadow: 'var(--shadow-sm)',
                 borderRadius: 'var(--radius-btn)',
                 backgroundColor: 'var(--bg)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.785rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
                 <MapPin size={14} color="var(--red)" /> LOCATION / VENUE
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem' }}>
                 {event.venue}
               </div>
             </div>
 
             <div 
               style={{ 
-                padding: '1.25rem', 
+                padding: '1rem 1.25rem', 
                 border: '2px solid var(--border)', 
                 boxShadow: 'var(--shadow-sm)',
                 borderRadius: 'var(--radius-btn)',
                 backgroundColor: 'var(--bg)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.785rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
                 <Users size={14} color="var(--green)" /> ORGANIZED BY
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem' }}>
                 {event.createdBy?.name || 'GDG RBU Chapter'}
               </div>
             </div>
@@ -277,19 +335,19 @@ export const EventDetailPage = () => {
           {/* Capacity Progress Bar with Black Border */}
           <div 
             style={{ 
-              padding: '1.5rem', 
+              padding: '1.25rem', 
               border: '2px solid var(--border)', 
               boxShadow: 'var(--shadow-sm)',
               borderRadius: 'var(--radius-btn)',
               backgroundColor: 'var(--bg)',
-              marginBottom: '2.5rem',
+              marginBottom: '2rem',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem', flexWrap: 'wrap', gap: '0.35rem' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase' }}>
                 SEAT OCCUPANCY
               </span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.85rem' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.825rem' }}>
                 <strong>{event.registeredCount}</strong> / {event.capacity} SEATS BOOKED
               </span>
             </div>
@@ -305,51 +363,38 @@ export const EventDetailPage = () => {
             </div>
           </div>
 
-          {/* Action Button Section with Brutalist Styling */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '2px solid var(--border)', paddingTop: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+          {/* Desktop / Tablet Inline Action Button Section */}
+          <div 
+            style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              borderTop: '2px solid var(--border)', 
+              paddingTop: '1.75rem', 
+              flexWrap: 'wrap', 
+              gap: '1rem' 
+            }}
+          >
             {event.isRegistered ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--green)', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--green)', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem' }}>
                 <CheckCircle2 size={18} /> You hold a confirmed seat for this event.
               </div>
             ) : (
-              <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.875rem' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.85rem' }}>
                 Seats are allocated atomically on first-come, first-served basis.
               </div>
             )}
 
-            {!user ? (
-              <Link to="/login" className="btn btn-primary btn-lg" style={{ minWidth: 220 }}>
-                🔑 LOGIN TO REGISTER
-              </Link>
-            ) : event.isRegistered ? (
-              <button
-                onClick={handleUnregister}
-                disabled={actionLoading || isPast}
-                className="btn btn-red btn-lg"
-                style={{ minWidth: 240 }}
-              >
-                {actionLoading ? <span className="spinner"></span> : '✕ CANCEL REGISTRATION'}
-              </button>
-            ) : isPast ? (
-              <button disabled className="btn btn-outline btn-lg" style={{ minWidth: 240 }}>
-                EVENT CONCLUDED
-              </button>
-            ) : isFull ? (
-              <button disabled className="btn btn-red btn-lg" style={{ minWidth: 240, opacity: 0.7 }}>
-                EVENT FULL (0 SEATS)
-              </button>
-            ) : (
-              <button
-                onClick={handleRegister}
-                disabled={actionLoading}
-                className="btn btn-green btn-lg"
-                style={{ minWidth: 240 }}
-              >
-                {actionLoading ? <span className="spinner"></span> : '🎟️ REGISTER NOW'}
-              </button>
-            )}
+            <div>
+              {renderActionButton(false)}
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Mobile Sticky Bottom Bar (Always reachable on phones < 640px) */}
+      <div className="sticky-bottom-bar" role="region" aria-label="Quick registration actions">
+        {renderActionButton(true)}
       </div>
     </div>
   );

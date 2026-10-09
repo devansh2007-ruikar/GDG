@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Calendar as CalendarIcon, RotateCcw, Sparkles } from 'lucide-react';
+import { Search, Calendar as CalendarIcon, RotateCcw, Sparkles, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import api from '../services/api';
 import { EventCard } from '../components/EventCard';
 import { SkeletonCard } from '../components/SkeletonCard';
@@ -14,6 +14,7 @@ export const EventsPage = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [upcomingOnly, setUpcomingOnly] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({ page: 1, limit: 9, total: 0, totalPages: 1 });
   const [loading, setLoading] = useState(true);
@@ -85,11 +86,12 @@ export const EventsPage = () => {
   };
 
   const domainTabs = ['', ...categories];
+  const hasActiveFilters = Boolean(search || selectedCategory || fromDate || toDate || !upcomingOnly);
 
   return (
-    <div className="container" style={{ padding: '3rem 1.5rem 5rem' }}>
+    <div className="container" style={{ paddingTop: 'clamp(1.5rem, 5vw, 3rem)', paddingBottom: '5rem' }}>
       {/* Neo-Brutalist Hero Header */}
-      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <div style={{ textAlign: 'center', marginBottom: 'clamp(1.75rem, 4vw, 3rem)' }}>
         <div 
           style={{ 
             display: 'inline-flex', 
@@ -103,9 +105,9 @@ export const EventsPage = () => {
             borderRadius: 'var(--radius-pill)', 
             fontFamily: 'var(--font-mono)',
             fontWeight: 800, 
-            fontSize: '0.785rem', 
+            fontSize: '0.75rem', 
             letterSpacing: '0.08em', 
-            marginBottom: '1.25rem',
+            marginBottom: '1rem',
           }}
         >
           <Sparkles size={14} /> GDG RBU • EVENTS
@@ -114,11 +116,8 @@ export const EventsPage = () => {
         <h1 
           className="hero-title"
           style={{ 
-            fontSize: '3.2rem', 
-            fontWeight: 700, 
             letterSpacing: '-0.02em', 
-            marginBottom: '0.75rem',
-            lineHeight: 1.1,
+            marginBottom: '0.65rem',
           }}
         >
           DISCOVER EVENTS
@@ -128,7 +127,7 @@ export const EventsPage = () => {
           style={{ 
             fontFamily: 'var(--font-mono)', 
             color: 'var(--muted)', 
-            fontSize: '1.05rem', 
+            fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', 
             maxWidth: 680, 
             margin: '0 auto',
             lineHeight: 1.6,
@@ -138,34 +137,34 @@ export const EventsPage = () => {
         </p>
       </div>
 
-      {/* Filter Bar with Neo-Brutalist Domain Tabs */}
+      {/* Filter Card */}
       <div 
         className="card" 
         style={{ 
-          marginBottom: '2.5rem', 
-          padding: '1.5rem',
+          marginBottom: '2rem', 
+          padding: 'clamp(1rem, 3vw, 1.5rem)',
           border: '2px solid var(--border)',
           boxShadow: 'var(--shadow-lg)',
           borderRadius: 0,
         }}
       >
-        {/* Category Domain Tabs */}
-        <div style={{ marginBottom: '1.5rem' }}>
+        {/* Category Domain Tabs with Horizontal Scroll on Mobile */}
+        <div style={{ marginBottom: '1.25rem' }}>
           <div 
             style={{ 
-              fontSize: '0.785rem', 
+              fontSize: '0.75rem', 
               fontFamily: 'var(--font-mono)', 
-              fontWeight: 700, 
+              fontWeight: 800, 
               color: 'var(--muted)', 
               textTransform: 'uppercase', 
               letterSpacing: '0.06em', 
-              marginBottom: '0.65rem' 
+              marginBottom: '0.5rem' 
             }}
           >
             SELECT DOMAIN / CATEGORY:
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <div className="category-scroll-container">
             {domainTabs.map((cat) => {
               const isSelected = selectedCategory === cat;
               return (
@@ -178,18 +177,19 @@ export const EventsPage = () => {
                   }}
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.85rem',
+                    fontSize: '0.825rem',
                     fontWeight: 700,
                     textTransform: 'uppercase',
-                    padding: '0.45rem 1rem',
+                    padding: '0.45rem 0.95rem',
                     border: '2px solid var(--border)',
                     borderRadius: 'var(--radius-pill)',
-                    boxShadow: isSelected ? 'none' : '3px 3px 0 var(--border)',
+                    boxShadow: isSelected ? 'none' : 'var(--shadow-sm)',
                     transform: isSelected ? 'translate(2px, 2px)' : 'none',
                     backgroundColor: isSelected ? 'var(--blue)' : 'var(--surface)',
                     color: isSelected ? '#000000' : 'var(--text)',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {cat || 'ALL EVENTS'}
@@ -199,105 +199,127 @@ export const EventsPage = () => {
           </div>
         </div>
 
-        {/* Search & Date Controls Grid */}
-        <div 
-          style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
-            gap: '1rem', 
-            alignItems: 'flex-end',
-            borderTop: '2px solid var(--border)',
-            paddingTop: '1.25rem',
-          }}
-        >
-          {/* Keyword Search */}
-          <div>
+        {/* Search Input Bar (Always full width) */}
+        <div style={{ borderTop: '2px solid var(--border)', paddingTop: '1.25rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
             <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <Search size={14} /> SEARCH KEYWORDS
             </label>
-            <input
-              type="text"
-              className="input"
-              placeholder="Search by title, venue, or topics..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                className="input"
+                placeholder="Search by title, venue, topics..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ flex: 1, minWidth: 'min(100%, 260px)' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowFilters((prev) => !prev)}
+                className="btn btn-outline"
+                style={{ minHeight: 44, padding: '0 1rem' }}
+                aria-label="Toggle Advanced Date Filters"
+              >
+                <Filter size={16} />
+                <span>Filters</span>
+                {(fromDate || toDate || !upcomingOnly) && (
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--blue)', display: 'inline-block' }} />
+                )}
+                {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </button>
+              {hasActiveFilters && (
+                <button 
+                  type="button" 
+                  onClick={handleResetFilters} 
+                  className="btn btn-outline"
+                  title="Reset all filters"
+                  style={{ minHeight: 44 }}
+                >
+                  <RotateCcw size={14} /> Reset
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* From Date */}
-          <div>
-            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <CalendarIcon size={14} /> FROM DATE
-            </label>
-            <input
-              type="date"
-              className="input"
-              value={fromDate}
-              onChange={(e) => {
-                setFromDate(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-
-          {/* To Date */}
-          <div>
-            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <CalendarIcon size={14} /> TO DATE
-            </label>
-            <input
-              type="date"
-              className="input"
-              value={toDate}
-              onChange={(e) => {
-                setToDate(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-
-          {/* Upcoming Toggle & Reset Button */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', minHeight: '44px' }}>
-            <label 
+          {/* Expandable Advanced Filters (Date Range & Upcoming Only) */}
+          {showFilters && (
+            <div 
               style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.5rem', 
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem', 
-                fontWeight: 700,
-                color: 'var(--text)', 
-                cursor: 'pointer' 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                gap: '1rem', 
+                alignItems: 'flex-end',
+                paddingTop: '0.75rem',
+                borderTop: '1px dashed var(--border)',
+                marginTop: '0.75rem',
               }}
             >
-              <input
-                type="checkbox"
-                checked={upcomingOnly}
-                onChange={(e) => {
-                  setUpcomingOnly(e.target.checked);
-                  setPage(1);
-                }}
-                style={{ 
-                  width: 18, 
-                  height: 18, 
-                  cursor: 'pointer', 
-                  accentColor: 'var(--blue)',
-                }}
-              />
-              UPCOMING ONLY
-            </label>
+              {/* From Date */}
+              <div>
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <CalendarIcon size={14} /> FROM DATE
+                </label>
+                <input
+                  type="date"
+                  className="input"
+                  value={fromDate}
+                  onChange={(e) => {
+                    setFromDate(e.target.value);
+                    setPage(1);
+                  }}
+                />
+              </div>
 
-            {(search || selectedCategory || fromDate || toDate || !upcomingOnly) && (
-              <button 
-                type="button" 
-                onClick={handleResetFilters} 
-                className="btn btn-outline btn-sm"
-                title="Reset all filters"
-              >
-                <RotateCcw size={14} /> Reset
-              </button>
-            )}
-          </div>
+              {/* To Date */}
+              <div>
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <CalendarIcon size={14} /> TO DATE
+                </label>
+                <input
+                  type="date"
+                  className="input"
+                  value={toDate}
+                  onChange={(e) => {
+                    setToDate(e.target.value);
+                    setPage(1);
+                  }}
+                />
+              </div>
+
+              {/* Upcoming Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', minHeight: '44px' }}>
+                <label 
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.85rem', 
+                    fontWeight: 700,
+                    color: 'var(--text)', 
+                    cursor: 'pointer' 
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={upcomingOnly}
+                    onChange={(e) => {
+                      setUpcomingOnly(e.target.checked);
+                      setPage(1);
+                    }}
+                    style={{ 
+                      width: 20, 
+                      height: 20, 
+                      cursor: 'pointer', 
+                      accentColor: 'var(--blue)',
+                    }}
+                  />
+                  UPCOMING ONLY
+                </label>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -313,15 +335,15 @@ export const EventsPage = () => {
           className="card" 
           style={{ 
             textAlign: 'center', 
-            padding: '4rem 1.5rem', 
+            padding: '3.5rem 1.25rem', 
             margin: '2rem 0',
             border: '2px solid var(--border)',
             boxShadow: 'var(--shadow-lg)',
             borderRadius: 0,
           }}
         >
-          <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>👾</div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 700, marginBottom: '0.5rem', lineHeight: 1.1 }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👾</div>
+          <h2 style={{ fontSize: 'clamp(1.3rem, 4vw, 1.6rem)', fontWeight: 700, marginBottom: '0.5rem', lineHeight: 1.1 }}>
             No Events Found
           </h2>
           <p 
@@ -330,11 +352,12 @@ export const EventsPage = () => {
               color: 'var(--muted)', 
               maxWidth: 480, 
               margin: '0 auto 1.5rem',
+              fontSize: '0.95rem',
             }}
           >
-            No events match your current filter criteria. Try selecting another domain or clearing keywords.
+            No events match your filter criteria. Try selecting another domain or clearing keywords.
           </p>
-          <button type="button" onClick={handleResetFilters} className="btn btn-yellow">
+          <button type="button" onClick={handleResetFilters} className="btn btn-yellow" style={{ minHeight: 44 }}>
             CLEAR ALL FILTERS
           </button>
         </div>
@@ -353,8 +376,8 @@ export const EventsPage = () => {
                 display: 'flex', 
                 justifyContent: 'center', 
                 alignItems: 'center', 
-                gap: '1rem', 
-                marginTop: '3.5rem',
+                gap: '0.75rem', 
+                marginTop: '3rem',
                 flexWrap: 'wrap',
               }}
             >
@@ -362,29 +385,36 @@ export const EventsPage = () => {
                 className="btn btn-outline"
                 disabled={page <= 1}
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                style={{ minHeight: 44, padding: '0 1rem' }}
+                aria-label="Previous Page"
               >
-                ← PREVIOUS
+                ← PREV
               </button>
 
               <div 
                 style={{ 
                   fontFamily: 'var(--font-mono)', 
                   fontWeight: 700, 
-                  fontSize: '0.9rem',
-                  padding: '0.45rem 1rem',
+                  fontSize: '0.85rem',
+                  padding: '0.45rem 0.85rem',
                   border: '2px solid var(--border)',
                   backgroundColor: 'var(--surface)',
                   boxShadow: 'var(--shadow-sm)',
                   borderRadius: 'var(--radius-btn)',
+                  minHeight: 44,
+                  display: 'inline-flex',
+                  alignItems: 'center',
                 }}
               >
-                PAGE <span style={{ color: 'var(--blue)' }}>{meta.page}</span> OF {meta.totalPages} ({meta.total} TOTAL)
+                PAGE <span style={{ color: 'var(--blue)', margin: '0 0.35rem' }}>{meta.page}</span> / {meta.totalPages}
               </div>
 
               <button
                 className="btn btn-outline"
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((prev) => Math.min(meta.totalPages, prev + 1))}
+                style={{ minHeight: 44, padding: '0 1rem' }}
+                aria-label="Next Page"
               >
                 NEXT →
               </button>

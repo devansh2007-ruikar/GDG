@@ -69,9 +69,9 @@ export const MyRegistrationsPage = () => {
   }
 
   return (
-    <div className="container" style={{ padding: '3rem 1.5rem 5rem' }}>
+    <div className="container" style={{ paddingTop: 'clamp(1.5rem, 4vw, 3rem)', paddingBottom: '5rem' }}>
       {/* Header */}
-      <div style={{ marginBottom: '2.75rem' }}>
+      <div style={{ marginBottom: 'clamp(1.75rem, 4vw, 2.75rem)' }}>
         <div 
           style={{ 
             display: 'inline-flex', 
@@ -85,18 +85,18 @@ export const MyRegistrationsPage = () => {
             borderRadius: 'var(--radius-pill)', 
             fontFamily: 'var(--font-mono)',
             fontWeight: 800, 
-            fontSize: '0.785rem', 
+            fontSize: '0.75rem', 
             letterSpacing: '0.08em', 
-            marginBottom: '1rem',
+            marginBottom: '0.85rem',
           }}
         >
           <Ticket size={14} /> ATTENDEE PORTAL
         </div>
 
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '0.5rem' }}>
+        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.75rem, 5.5vw, 3rem)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '0.5rem' }}>
           My Registrations
         </h1>
-        <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '1.05rem' }}>
+        <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)' }}>
           Manage your upcoming passes, generate admission QR codes, and review past events.
         </p>
       </div>
@@ -106,29 +106,29 @@ export const MyRegistrationsPage = () => {
           className="card" 
           style={{ 
             textAlign: 'center', 
-            padding: '4.5rem 1.5rem',
+            padding: 'clamp(3rem, 8vw, 4.5rem) 1.25rem',
             border: '2px solid var(--border)',
             boxShadow: 'var(--shadow-lg)',
             borderRadius: 0,
           }}
         >
-          <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🎟️</div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '0.5rem' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎟️</div>
+          <h2 style={{ fontSize: 'clamp(1.4rem, 4.5vw, 1.75rem)', fontWeight: 700, lineHeight: 1.1, marginBottom: '0.5rem' }}>
             No Active Reservations
           </h2>
-          <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginBottom: '1.75rem', fontSize: '0.95rem' }}>
+          <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
             You haven't reserved a seat for any upcoming GDG sessions yet.
           </p>
-          <Link to="/events" className="btn btn-yellow btn-lg">
+          <Link to="/events" className="btn btn-yellow btn-lg" style={{ minHeight: 44 }}>
             EXPLORE EVENTS →
           </Link>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
           {/* Upcoming Section */}
           <section>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.1 }}>Upcoming Events</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+              <h2 style={{ fontSize: 'clamp(1.3rem, 4vw, 1.75rem)', fontWeight: 700, lineHeight: 1.1 }}>Upcoming Events</h2>
               <span className="badge badge-tech">{upcoming.length}</span>
             </div>
 
@@ -136,7 +136,7 @@ export const MyRegistrationsPage = () => {
               <div 
                 className="card" 
                 style={{ 
-                  padding: '1.75rem', 
+                  padding: '1.5rem', 
                   fontFamily: 'var(--font-mono)', 
                   color: 'var(--muted)',
                   border: '2px solid var(--border)',
@@ -162,6 +162,7 @@ export const MyRegistrationsPage = () => {
                       boxShadow: 'var(--shadow-lg)',
                       borderRadius: 0,
                       gap: '0.75rem',
+                      padding: 'clamp(1rem, 3vw, 1.5rem)',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -169,7 +170,7 @@ export const MyRegistrationsPage = () => {
                       <span className="badge badge-registered">CONFIRMED SEAT</span>
                     </div>
 
-                    <h3 style={{ fontSize: '1.35rem', fontWeight: 700, margin: '0.35rem 0' }}>
+                    <h3 style={{ fontSize: 'clamp(1.15rem, 3.5vw, 1.35rem)', fontWeight: 700, margin: '0.25rem 0' }}>
                       <Link to={`/events/${reg.event.id}`} style={{ color: 'inherit' }}>
                         {reg.event.title}
                       </Link>
@@ -178,7 +179,7 @@ export const MyRegistrationsPage = () => {
                     <div 
                       style={{ 
                         fontFamily: 'var(--font-mono)', 
-                        fontSize: '0.85rem', 
+                        fontSize: '0.825rem', 
                         display: 'flex', 
                         flexDirection: 'column', 
                         gap: '0.4rem',
@@ -186,7 +187,7 @@ export const MyRegistrationsPage = () => {
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--radius-btn)',
                         backgroundColor: 'var(--bg)',
-                        marginBottom: '0.75rem',
+                        marginBottom: '0.5rem',
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
@@ -199,7 +200,7 @@ export const MyRegistrationsPage = () => {
                       </div>
                     </div>
 
-                    {/* Brutalist Button Controls */}
+                    {/* Brutalist Button Controls (Full width on mobile) */}
                     <div 
                       style={{ 
                         display: 'flex', 
@@ -214,16 +215,16 @@ export const MyRegistrationsPage = () => {
                         type="button"
                         onClick={() => setSelectedQrTicket(reg)}
                         className="btn btn-yellow"
-                        style={{ width: '100%', justifyContent: 'center' }}
+                        style={{ width: '100%', minHeight: 44, justifyContent: 'center' }}
                       >
                         <QrCode size={16} /> VIEW QR ADMISSION PASS
                       </button>
 
-                      <div style={{ display: 'flex', gap: '0.65rem' }}>
+                      <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
                         <Link 
                           to={`/events/${reg.event.id}`} 
                           className="btn btn-outline" 
-                          style={{ flex: 1, justifyContent: 'center' }}
+                          style={{ flex: '1 1 min(100%, 140px)', minHeight: 44, justifyContent: 'center' }}
                         >
                           DETAILS <ArrowRight size={14} />
                         </Link>
@@ -232,7 +233,7 @@ export const MyRegistrationsPage = () => {
                           onClick={() => handleUnregister(reg.event.id, reg.event.title)}
                           disabled={actionId === reg.event.id}
                           className="btn btn-red"
-                          style={{ flex: 1, justifyContent: 'center' }}
+                          style={{ flex: '1 1 min(100%, 140px)', minHeight: 44, justifyContent: 'center' }}
                         >
                           {actionId === reg.event.id ? <span className="spinner"></span> : <><Trash2 size={14} /> CANCEL</>}
                         </button>

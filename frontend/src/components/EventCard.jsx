@@ -78,7 +78,7 @@ export const EventCard = ({ event }) => {
       <h3 
         style={{ 
           fontFamily: 'var(--font-heading)',
-          fontSize: '1.35rem', 
+          fontSize: 'clamp(1.15rem, 3.5vw, 1.35rem)', 
           fontWeight: 700, 
           letterSpacing: '-0.02em', 
           marginBottom: '0.65rem', 
@@ -168,7 +168,7 @@ export const EventCard = ({ event }) => {
         <Link 
           to={`/events/${event.id}`} 
           className="btn btn-outline" 
-          style={{ width: '100%', justifyContent: 'space-between' }}
+          style={{ width: '100%', minHeight: 44, justifyContent: 'space-between' }}
         >
           <span>VIEW DETAILS</span>
           <ArrowUpRight size={16} />

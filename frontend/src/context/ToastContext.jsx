@@ -18,6 +18,15 @@ export const ToastProvider = ({ children }) => {
   const error = useCallback((msg) => addToast(msg, 'error'), [addToast]);
   const info = useCallback((msg) => addToast(msg, 'info'), [addToast]);
 
+  React.useEffect(() => {
+    const handleServerWaking = (e) => {
+      const msg = e.detail?.message || 'Waking up the server...';
+      info(msg);
+    };
+    window.addEventListener('app:server-waking', handleServerWaking);
+    return () => window.removeEventListener('app:server-waking', handleServerWaking);
+  }, [info]);
+
   const removeToast = (id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };

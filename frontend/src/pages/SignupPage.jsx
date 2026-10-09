@@ -48,13 +48,13 @@ export const SignupPage = () => {
   };
 
   return (
-    <div className="container" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
+    <div className="container" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 1.5rem)' }}>
       <div 
         className="card" 
         style={{ 
           width: '100%', 
           maxWidth: 480, 
-          padding: '2.5rem',
+          padding: 'clamp(1.25rem, 5vw, 2.5rem)',
           border: '3px solid var(--border)',
           boxShadow: 'var(--shadow-lg)',
           borderRadius: 0,
@@ -84,7 +84,7 @@ export const SignupPage = () => {
               <Sparkles size={12} /> NEW MEMBERSHIP
             </div>
           </div>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem', lineHeight: 1.1 }}>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem', lineHeight: 1.1 }}>
             Join GDG RBU
           </h1>
           <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.925rem' }}>
@@ -104,6 +104,7 @@ export const SignupPage = () => {
             <label className="form-label">FULL NAME</label>
             <input
               type="text"
+              autoComplete="name"
               className="input"
               placeholder="e.g. Alex Johnson"
               value={name}
@@ -116,6 +117,8 @@ export const SignupPage = () => {
             <label className="form-label">EMAIL ADDRESS</label>
             <input
               type="email"
+              autoComplete="email"
+              inputMode="email"
               className="input"
               placeholder="alex@example.com"
               value={email}
@@ -128,6 +131,7 @@ export const SignupPage = () => {
             <label className="form-label">PASSWORD (MIN 8 CHARS, 1 LETTER + 1 NUMBER)</label>
             <input
               type="password"
+              autoComplete="new-password"
               className="input"
               placeholder="••••••••"
               value={password}
@@ -140,7 +144,7 @@ export const SignupPage = () => {
             type="submit"
             disabled={loading}
             className="btn btn-green"
-            style={{ width: '100%', marginTop: '0.5rem', height: 48, justifyContent: 'center' }}
+            style={{ width: '100%', marginTop: '0.5rem', minHeight: 48, height: 48, justifyContent: 'center' }}
           >
             {loading ? <span className="spinner"></span> : <><UserPlus size={16} /> CREATE ACCOUNT</>}
           </button>

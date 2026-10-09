@@ -14,7 +14,7 @@ export const Footer = () => {
       style={{
         borderTop: '2px solid var(--border)',
         backgroundColor: 'var(--surface)',
-        padding: '3rem 1.5rem 2rem',
+        padding: 'clamp(2rem, 5vw, 3rem) clamp(1rem, 3vw, 1.5rem) 2rem',
         marginTop: 'auto',
       }}
     >
@@ -78,7 +78,7 @@ export const Footer = () => {
           </div>
 
           {/* Quick navigation */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(1.5rem, 5vw, 3rem)' }}>
             <div>
               <div
                 style={{

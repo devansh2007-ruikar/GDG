@@ -94,21 +94,21 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay mobile-fullscreen" onClick={onClose}>
       <div 
-        className="modal-content" 
+        className="modal-content mobile-fullscreen-content" 
         onClick={(e) => e.stopPropagation()} 
         style={{ 
-          maxWidth: 620,
+          maxWidth: 'min(620px, 94vw)',
           border: '3px solid var(--border)',
           boxShadow: 'var(--shadow-lg)',
           borderRadius: 0,
         }}
       >
-        <div className="modal-header" style={{ borderBottom: '2px solid var(--border)' }}>
+        <div className="modal-header modal-fullscreen-header" style={{ borderBottom: '2px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Sparkles size={20} color="var(--blue)" />
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            <h2 style={{ fontSize: 'clamp(1.2rem, 3.5vw, 1.5rem)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
               {isEditing ? 'Edit Event' : 'Create Event'}
             </h2>
           </div>
@@ -116,109 +116,113 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
             type="button"
             onClick={onClose} 
             className="btn btn-outline btn-sm" 
-            style={{ padding: '0.25rem 0.5rem' }}
+            style={{ minWidth: 44, minHeight: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            aria-label="Close modal"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
-        {formError && (
-          <div className="alert-box alert-error" style={{ marginBottom: '1.25rem' }}>
-            <AlertCircle size={18} />
-            <span>{formError}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">EVENT TITLE (3-100 CHARS)</label>
-            <input
-              type="text"
-              className="input"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g. Next.js 15 & AI Agents Deep Dive"
-              required
-            />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div className="form-group">
-              <label className="form-label">DOMAIN / CATEGORY</label>
-              <select
-                className="select"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              >
-                <option value="Tech">Tech</option>
-                <option value="Workshop">Workshop</option>
-                <option value="Hackathon">Hackathon</option>
-                <option value="Meetup">Meetup</option>
-                <option value="Talk">Talk</option>
-              </select>
-            </div>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+          <div className="modal-fullscreen-body">
+            {formError && (
+              <div className="alert-box alert-error" style={{ marginBottom: '1.25rem' }}>
+                <AlertCircle size={18} />
+                <span>{formError}</span>
+              </div>
+            )}
 
             <div className="form-group">
-              <label className="form-label">SEAT CAPACITY (1-10,000)</label>
-              <input
-                type="number"
-                min="1"
-                max="10000"
-                className="input"
-                value={formData.capacity}
-                onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                required
-              />
-              {isEditing && (
-                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginTop: '0.25rem' }}>
-                  Current attendees: {event.registeredCount}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div className="form-group">
-              <label className="form-label">DATE & TIME (FUTURE)</label>
-              <input
-                type="datetime-local"
-                className="input"
-                value={formData.dateTime}
-                onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">VENUE / LOCATION</label>
+              <label className="form-label">EVENT TITLE (3-100 CHARS)</label>
               <input
                 type="text"
                 className="input"
-                value={formData.venue}
-                onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                placeholder="e.g. Auditorium Hall A"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="e.g. Next.js 15 & AI Agents Deep Dive"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2" style={{ gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label">DOMAIN / CATEGORY</label>
+                <select
+                  className="select"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                >
+                  <option value="Tech">Tech</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Hackathon">Hackathon</option>
+                  <option value="Meetup">Meetup</option>
+                  <option value="Talk">Talk</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">SEAT CAPACITY (1-10,000)</label>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  max="10000"
+                  className="input"
+                  value={formData.capacity}
+                  onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                  required
+                />
+                {isEditing && (
+                  <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginTop: '0.25rem' }}>
+                    Current attendees: {event.registeredCount}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2" style={{ gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label">DATE & TIME (FUTURE)</label>
+                <input
+                  type="datetime-local"
+                  className="input"
+                  value={formData.dateTime}
+                  onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">VENUE / LOCATION</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={formData.venue}
+                  onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+                  placeholder="e.g. Auditorium Hall A"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">DESCRIPTION (10-2000 CHARS)</label>
+              <textarea
+                className="input"
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Describe agenda, topics, speaker bios, and takeaways..."
                 required
               />
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">DESCRIPTION (10-2000 CHARS)</label>
-            <textarea
-              className="input"
-              rows={4}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe agenda, topics, speaker bios, and takeaways..."
-              required
-            />
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.75rem' }}>
-            <button type="button" onClick={onClose} className="btn btn-outline" disabled={submitting}>
+          <div className="modal-fullscreen-footer">
+            <button type="button" onClick={onClose} className="btn btn-outline" disabled={submitting} style={{ minHeight: 44 }}>
               CANCEL
             </button>
-            <button type="submit" className="btn btn-green" disabled={submitting}>
+            <button type="submit" className="btn btn-green" disabled={submitting} style={{ minHeight: 44 }}>
               {submitting ? <span className="spinner"></span> : isEditing ? 'SAVE CHANGES' : 'PUBLISH EVENT'}
             </button>
           </div>

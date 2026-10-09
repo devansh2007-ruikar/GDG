@@ -80,7 +80,7 @@ export const AdminPage = () => {
   };
 
   return (
-    <div className="container" style={{ padding: '3rem 1.5rem 5rem' }}>
+    <div className="container" style={{ padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 1.5rem) 5rem' }}>
       {/* Admin Header */}
       <div 
         style={{ 
@@ -113,15 +113,15 @@ export const AdminPage = () => {
           >
             🛡️ GDG RBU • COMMAND CENTER
           </div>
-          <h1 style={{ fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.4rem', lineHeight: 1.1 }}>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.85rem)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.4rem', lineHeight: 1.1 }}>
             Event Administration
           </h1>
-          <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '1.05rem' }}>
+          <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)' }}>
             Live platform metrics, capacity tracking, and attendee roster management.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="admin-header-actions">
           <button type="button" onClick={refreshData} className="btn btn-outline" title="Refresh data">
             <RotateCcw size={16} /> REFRESH
           </button>
@@ -135,7 +135,7 @@ export const AdminPage = () => {
       <div 
         style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 190px), 1fr))', 
           gap: '1.25rem', 
           marginBottom: '2.5rem' 
         }}
@@ -528,80 +528,177 @@ export const AdminPage = () => {
           </button>
         </div>
       ) : (
-        <div className="table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>EVENT TITLE</th>
-                <th>CATEGORY</th>
-                <th>DATE & TIME</th>
-                <th>VENUE</th>
-                <th>SEATS (FILLED / MAX)</th>
-                <th style={{ textAlign: 'right' }}>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.map((event) => {
-                const isFull = event.registeredCount >= event.capacity;
-                return (
-                  <tr key={event.id}>
-                    <td>
-                      <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{event.title}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+        <>
+          {/* Desktop & Tablet Table (>= 768px) */}
+          <div className="desktop-table-view">
+            <div className="table-container">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>EVENT TITLE</th>
+                    <th>CATEGORY</th>
+                    <th>DATE & TIME</th>
+                    <th>VENUE</th>
+                    <th>SEATS (FILLED / MAX)</th>
+                    <th style={{ textAlign: 'right' }}>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {events.map((event) => {
+                    const isFull = event.registeredCount >= event.capacity;
+                    return (
+                      <tr key={event.id}>
+                        <td>
+                          <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{event.title}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+                            ID: {event.id.slice(0, 8)}...
+                          </div>
+                        </td>
+                        <td>
+                          <span className="badge badge-tech">{event.category}</span>
+                        </td>
+                        <td style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                          {formatDate(event.dateTime)}
+                        </td>
+                        <td style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
+                          {event.venue}
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontWeight: 800, color: isFull ? 'var(--red)' : 'var(--text)' }}>
+                              {event.registeredCount} / {event.capacity}
+                            </span>
+                            {isFull && <span className="badge badge-full" style={{ fontSize: '0.65rem' }}>FULL</span>}
+                          </div>
+                        </td>
+                        <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'inline-flex', gap: '0.45rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedEventForAttendees(event)}
+                              className="btn btn-outline btn-sm"
+                              title="View attendee roster"
+                            >
+                              <Users size={14} /> ({event.registeredCount})
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingEvent(event)}
+                              className="btn btn-yellow btn-sm"
+                              title="Edit event"
+                            >
+                              <Edit size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(event.id, event.title)}
+                              className="btn btn-red btn-sm"
+                              title="Delete event"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile Event Cards (< 768px) */}
+          <div className="mobile-cards-view">
+            {events.map((event) => {
+              const isFull = event.registeredCount >= event.capacity;
+              const fillPercentage = Math.round((event.registeredCount / event.capacity) * 100);
+              return (
+                <div
+                  key={`mobile-card-${event.id}`}
+                  className="card"
+                  style={{
+                    padding: '1.25rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.85rem',
+                    borderRadius: 0,
+                    border: '2px solid var(--border)',
+                    boxShadow: 'var(--shadow-md)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <div>
+                      <span className="badge badge-tech" style={{ marginBottom: '0.4rem' }}>{event.category}</span>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700, lineHeight: 1.2 }}>{event.title}</h3>
+                      <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginTop: '0.2rem' }}>
                         ID: {event.id.slice(0, 8)}...
                       </div>
-                    </td>
-                    <td>
-                      <span className="badge badge-tech">{event.category}</span>
-                    </td>
-                    <td style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
-                      {formatDate(event.dateTime)}
-                    </td>
-                    <td style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
-                      {event.venue}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontWeight: 800, color: isFull ? 'var(--red)' : 'var(--text)' }}>
-                          {event.registeredCount} / {event.capacity}
-                        </span>
-                        {isFull && <span className="badge badge-full" style={{ fontSize: '0.65rem' }}>FULL</span>}
-                      </div>
-                    </td>
-                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      <div style={{ display: 'inline-flex', gap: '0.45rem' }}>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedEventForAttendees(event)}
-                          className="btn btn-outline btn-sm"
-                          title="View attendee roster"
-                        >
-                          <Users size={14} /> ({event.registeredCount})
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setEditingEvent(event)}
-                          className="btn btn-yellow btn-sm"
-                          title="Edit event"
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(event.id, event.title)}
-                          className="btn btn-red btn-sm"
-                          title="Delete event"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text)' }}>
+                      <Clock size={14} color="var(--blue)" />
+                      <span>{formatDate(event.dateTime)}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--muted)' }}>
+                      <span style={{ fontWeight: 700 }}>📍</span>
+                      <span>{event.venue}</span>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '0.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', marginBottom: '0.35rem' }}>
+                      <span style={{ fontWeight: 700, color: isFull ? 'var(--red)' : 'var(--text)' }}>
+                        Seats: {event.registeredCount} / {event.capacity} ({fillPercentage}%)
+                      </span>
+                      {isFull && <span className="badge badge-full" style={{ fontSize: '0.65rem' }}>FULL</span>}
+                    </div>
+                    <div className="progress-bar-container" style={{ height: 10 }}>
+                      <div
+                        className="progress-bar-fill"
+                        style={{
+                          width: `${Math.min(100, fillPercentage)}%`,
+                          backgroundColor: isFull ? 'var(--red)' : fillPercentage >= 70 ? 'var(--yellow)' : 'var(--blue)',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginTop: '0.5rem', paddingTop: '0.75rem', borderTop: '2px solid var(--border)' }}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedEventForAttendees(event)}
+                      className="btn btn-outline btn-sm"
+                      style={{ minHeight: 44, padding: '0.4rem 0.25rem', fontSize: '0.75rem', justifyContent: 'center' }}
+                      title="View attendee roster"
+                    >
+                      <Users size={14} /> Attendees ({event.registeredCount})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingEvent(event)}
+                      className="btn btn-yellow btn-sm"
+                      style={{ minHeight: 44, padding: '0.4rem 0.25rem', fontSize: '0.75rem', justifyContent: 'center' }}
+                      title="Edit event"
+                    >
+                      <Edit size={14} /> Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(event.id, event.title)}
+                      className="btn btn-red btn-sm"
+                      style={{ minHeight: 44, padding: '0.4rem 0.25rem', fontSize: '0.75rem', justifyContent: 'center' }}
+                      title="Delete event"
+                    >
+                      <Trash2 size={14} /> Delete
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {/* Attendees Modal */}

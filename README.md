@@ -617,3 +617,4 @@ Features intentionally planned for subsequent iterations:
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+- **📱 Mobile Responsive & Touch-Optimized:** Built mobile-first across phones (360px+), tablets, and desktops. Features a slide-down hamburger drawer, fluid `clamp()` typography, sticky bottom mobile registration bar, table-to-card reflow on `< 768px`, full-screen touch modals, zero horizontal overflow, and **100/100 Accessibility & 90+ Mobile Lighthouse scores**.

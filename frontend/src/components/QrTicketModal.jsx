@@ -46,36 +46,37 @@ export const QrTicketModal = ({ registration, onClose }) => {
         className="modal-content print-ticket-area" 
         onClick={(e) => e.stopPropagation()} 
         style={{ 
-          maxWidth: 480, 
+          maxWidth: 'min(480px, 94vw)', 
           textAlign: 'center',
-          border: '3px solid var(--border)',
+          border: '2px solid var(--border)',
           boxShadow: 'var(--shadow-lg)',
           borderRadius: 0,
-          padding: '2rem',
+          padding: 'clamp(1.25rem, 4vw, 2rem)',
         }}
       >
         {/* Header */}
-        <div className="modal-header" style={{ marginBottom: '1.5rem', borderBottom: '2px solid var(--border)' }}>
+        <div className="modal-header" style={{ marginBottom: '1.25rem', borderBottom: '2px solid var(--border)', paddingBottom: '0.85rem' }}>
           <div style={{ textAlign: 'left' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            <h2 style={{ fontSize: 'clamp(1.25rem, 4vw, 1.5rem)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
               Digital Admission Pass
             </h2>
-            <p style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+            <p style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
               OFFICIAL GDG EVENT TICKET
             </p>
           </div>
           <button 
             type="button"
             onClick={onClose} 
-            className="btn btn-outline btn-sm" 
-            style={{ padding: '0.25rem 0.5rem' }}
+            className="btn btn-outline" 
+            style={{ minWidth: 44, minHeight: 44, padding: 0 }}
+            aria-label="Close ticket pass"
           >
-            <X size={16} />
+            <X size={20} />
           </button>
         </div>
 
         {loading ? (
-          <div style={{ padding: '3.5rem 1.5rem' }}>
+          <div style={{ padding: '3rem 1rem' }}>
             <span className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
             <p style={{ marginTop: '1.25rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem' }}>
               Generating secure QR pass...
@@ -85,7 +86,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
           <div className="alert-box alert-error" style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
             <div>
               <p style={{ fontWeight: 700 }}>{errorMsg}</p>
-              <button type="button" onClick={onClose} className="btn btn-outline btn-sm" style={{ marginTop: '0.75rem' }}>
+              <button type="button" onClick={onClose} className="btn btn-outline" style={{ marginTop: '0.75rem', minHeight: 44 }}>
                 CLOSE
               </button>
             </div>
@@ -98,16 +99,16 @@ export const QrTicketModal = ({ registration, onClose }) => {
                 border: '2px solid var(--border)',
                 boxShadow: 'var(--shadow-sm)',
                 borderRadius: 0,
-                padding: '1.5rem',
-                marginBottom: '1.5rem',
+                padding: 'clamp(1rem, 3vw, 1.5rem)',
+                marginBottom: '1.25rem',
               }}
             >
               {/* Category & Title */}
-              <div style={{ marginBottom: '1rem' }}>
-                <span className="badge badge-tech" style={{ marginBottom: '0.65rem' }}>
+              <div style={{ marginBottom: '0.85rem' }}>
+                <span className="badge badge-tech" style={{ marginBottom: '0.5rem' }}>
                   {ticketData.event.category}
                 </span>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 700, lineHeight: 1.1, color: 'var(--text)' }}>
+                <h3 style={{ fontSize: 'clamp(1.15rem, 3.5vw, 1.4rem)', fontWeight: 700, lineHeight: 1.1, color: 'var(--text)' }}>
                   {ticketData.event.title}
                 </h3>
               </div>
@@ -116,38 +117,46 @@ export const QrTicketModal = ({ registration, onClose }) => {
               <div 
                 style={{ 
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.825rem', 
+                  fontSize: '0.8rem', 
                   color: 'var(--text)', 
                   display: 'flex', 
                   flexDirection: 'column', 
                   gap: '0.35rem',
-                  marginBottom: '1.25rem',
-                  padding: '0.75rem',
+                  marginBottom: '1rem',
+                  padding: '0.65rem',
                   backgroundColor: 'var(--surface)',
                   border: '1px solid var(--border)',
                   borderRadius: 4,
+                  textAlign: 'left',
                 }}
               >
                 <div>📅 <strong>{formatDate(ticketData.event.dateTime)}</strong></div>
                 <div>📍 <strong>{ticketData.event.venue}</strong></div>
               </div>
 
-              {/* QR Code Container with High-Contrast Sharp Border */}
+              {/* QR Code Container with High-Contrast Sharp Border (Max 70vw) */}
               <div 
                 style={{
                   display: 'inline-block',
-                  padding: '12px',
+                  padding: '10px',
                   backgroundColor: '#FFFFFF',
-                  border: '3px solid #000000',
-                  boxShadow: '4px 4px 0 #000000',
+                  border: '2px solid #000000',
+                  boxShadow: 'var(--shadow-sm)',
                   borderRadius: 0,
-                  marginBottom: '1.25rem',
+                  marginBottom: '1rem',
+                  maxWidth: '100%',
                 }}
               >
                 <img 
                   src={ticketData.qrCode} 
                   alt="Registration QR Code" 
-                  style={{ display: 'block', width: 200, height: 200 }} 
+                  style={{ 
+                    display: 'block', 
+                    width: 'min(190px, 65vw)', 
+                    height: 'min(190px, 65vw)',
+                    maxWidth: '100%',
+                    aspectRatio: '1/1',
+                  }} 
                 />
               </div>
 
@@ -155,27 +164,28 @@ export const QrTicketModal = ({ registration, onClose }) => {
               <div 
                 style={{ 
                   borderTop: '2px dashed var(--border)', 
-                  paddingTop: '1rem', 
+                  paddingTop: '0.85rem', 
                   textAlign: 'left',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.825rem',
+                  fontSize: '0.8rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.4rem',
+                  gap: '0.35rem',
+                  wordBreak: 'break-word',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
                   <span style={{ color: 'var(--muted)' }}>ATTENDEE:</span>
                   <span style={{ fontWeight: 700 }}>{ticketData.attendee.name}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
                   <span style={{ color: 'var(--muted)' }}>EMAIL:</span>
                   <span style={{ fontWeight: 600 }}>{ticketData.attendee.email}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
                   <span style={{ color: 'var(--muted)' }}>PASS ID:</span>
                   <span style={{ fontWeight: 700, color: 'var(--blue)' }}>
-                    {ticketData.registrationId.slice(0, 16)}...
+                    {ticketData.registrationId.slice(0, 14)}...
                   </span>
                 </div>
               </div>
@@ -183,9 +193,9 @@ export const QrTicketModal = ({ registration, onClose }) => {
               {/* Checkmark */}
               <div 
                 style={{ 
-                  marginTop: '1rem', 
+                  marginTop: '0.85rem', 
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.785rem', 
+                  fontSize: '0.75rem', 
                   fontWeight: 700,
                   color: 'var(--green)', 
                   display: 'flex', 
@@ -199,12 +209,12 @@ export const QrTicketModal = ({ registration, onClose }) => {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '0.85rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <button 
                 type="button" 
                 onClick={handlePrint} 
                 className="btn btn-outline" 
-                style={{ flex: 1, justifyContent: 'center' }}
+                style={{ flex: '1 1 min(100%, 140px)', minHeight: 44, justifyContent: 'center' }}
               >
                 <Printer size={16} /> PRINT PASS
               </button>
@@ -212,7 +222,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
                 type="button" 
                 onClick={onClose} 
                 className="btn btn-yellow" 
-                style={{ flex: 1, justifyContent: 'center' }}
+                style={{ flex: '1 1 min(100%, 140px)', minHeight: 44, justifyContent: 'center' }}
               >
                 DONE
               </button>
