@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, RotateCcw, Calendar, Users, Ticket, Flame, BarChart3, Edit, Trash2 } from 'lucide-react';
+import { Plus, RotateCcw, Calendar, Users, Ticket, Flame, BarChart3, Edit, Trash2, Clock, UserCheck } from 'lucide-react';
 import api from '../services/api';
 import { AttendeesModal } from '../components/AttendeesModal';
 import { EventFormModal } from '../components/EventFormModal';
@@ -63,8 +63,7 @@ export const AdminPage = () => {
     try {
       await api.delete(`/events/${id}`);
       success(`Event "${title}" successfully deleted`);
-      setEvents((prev) => prev.filter((e) => e.id !== id));
-      fetchAnalytics();
+      refreshData();
     } catch (err) {
       error(err.response?.data?.error?.message || 'Failed to delete event');
     }
@@ -133,14 +132,22 @@ export const AdminPage = () => {
       </div>
 
       {/* Analytics Stat Cards */}
-      <div className="grid grid-cols-3" style={{ marginBottom: '2.5rem' }}>
+      <div 
+        style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', 
+          gap: '1.25rem', 
+          marginBottom: '2.5rem' 
+        }}
+      >
+        {/* 1. Total Events */}
         <div 
           className="card" 
           style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '1.25rem', 
-            padding: '1.5rem',
+            gap: '1rem', 
+            padding: '1.25rem',
             border: '2px solid var(--border)',
             boxShadow: 'var(--shadow-lg)',
             borderRadius: 0,
@@ -151,8 +158,9 @@ export const AdminPage = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 52,
-              height: 52,
+              width: 48,
+              height: 48,
+              minWidth: 48,
               backgroundColor: 'var(--blue)', 
               border: '2px solid var(--border)',
               borderRadius: 'var(--radius-btn)',
@@ -160,28 +168,29 @@ export const AdminPage = () => {
               color: '#000',
             }}
           >
-            <Calendar size={24} />
+            <Calendar size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               TOTAL EVENTS
             </div>
-            <div style={{ fontSize: '2.4rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
+            <div style={{ fontSize: '2rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
               {analyticsLoading ? '...' : analytics?.totalEvents ?? 0}
             </div>
-            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
               Published on platform
             </div>
           </div>
         </div>
 
+        {/* 2. Upcoming Events */}
         <div 
           className="card" 
           style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '1.25rem', 
-            padding: '1.5rem',
+            gap: '1rem', 
+            padding: '1.25rem',
             border: '2px solid var(--border)',
             boxShadow: 'var(--shadow-lg)',
             borderRadius: 0,
@@ -192,8 +201,52 @@ export const AdminPage = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 52,
-              height: 52,
+              width: 48,
+              height: 48,
+              minWidth: 48,
+              backgroundColor: 'var(--purple)', 
+              border: '2px solid var(--border)',
+              borderRadius: 'var(--radius-btn)',
+              boxShadow: '2px 2px 0 var(--border)',
+              color: '#000',
+            }}
+          >
+            <Clock size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              UPCOMING EVENTS
+            </div>
+            <div style={{ fontSize: '2rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
+              {analyticsLoading ? '...' : analytics?.upcomingEvents ?? 0}
+            </div>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              Scheduled in future
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Registered Users */}
+        <div 
+          className="card" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '1rem', 
+            padding: '1.25rem',
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+            borderRadius: 0,
+          }}
+        >
+          <div 
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 48,
+              height: 48,
+              minWidth: 48,
               backgroundColor: 'var(--yellow)', 
               border: '2px solid var(--border)',
               borderRadius: 'var(--radius-btn)',
@@ -201,28 +254,29 @@ export const AdminPage = () => {
               color: '#000',
             }}
           >
-            <Users size={24} />
+            <Users size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              TOTAL ATTENDEES
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              REGISTERED USERS
             </div>
-            <div style={{ fontSize: '2.4rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
-              {analyticsLoading ? '...' : analytics?.totalUsers ?? 0}
+            <div style={{ fontSize: '2rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
+              {analyticsLoading ? '...' : analytics?.registeredUsers ?? analytics?.totalUsers ?? 0}
             </div>
-            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              Registered member accounts
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              Accounts with USER role
             </div>
           </div>
         </div>
 
+        {/* 4. Total Bookings */}
         <div 
           className="card" 
           style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '1.25rem', 
-            padding: '1.5rem',
+            gap: '1rem', 
+            padding: '1.25rem',
             border: '2px solid var(--border)',
             boxShadow: 'var(--shadow-lg)',
             borderRadius: 0,
@@ -233,8 +287,9 @@ export const AdminPage = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 52,
-              height: 52,
+              width: 48,
+              height: 48,
+              minWidth: 48,
               backgroundColor: 'var(--green)', 
               border: '2px solid var(--border)',
               borderRadius: 'var(--radius-btn)',
@@ -242,17 +297,60 @@ export const AdminPage = () => {
               color: '#000',
             }}
           >
-            <Ticket size={24} />
+            <Ticket size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               TOTAL BOOKINGS
             </div>
-            <div style={{ fontSize: '2.4rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
-              {analyticsLoading ? '...' : analytics?.totalRegistrations ?? 0}
+            <div style={{ fontSize: '2rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
+              {analyticsLoading ? '...' : analytics?.totalBookings ?? analytics?.totalRegistrations ?? 0}
             </div>
-            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              Seats confirmed to date
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              Confirmed seat rows
+            </div>
+          </div>
+        </div>
+
+        {/* 5. Unique Attendees */}
+        <div 
+          className="card" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '1rem', 
+            padding: '1.25rem',
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+            borderRadius: 0,
+          }}
+        >
+          <div 
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 48,
+              height: 48,
+              minWidth: 48,
+              backgroundColor: 'var(--blue)', 
+              border: '2px solid var(--border)',
+              borderRadius: 'var(--radius-btn)',
+              boxShadow: '2px 2px 0 var(--border)',
+              color: '#000',
+            }}
+          >
+            <UserCheck size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              UNIQUE ATTENDEES
+            </div>
+            <div style={{ fontSize: '2rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
+              {analyticsLoading ? '...' : analytics?.uniqueAttendees ?? 0}
+            </div>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              Distinct users with ≥1 seat
             </div>
           </div>
         </div>
@@ -279,6 +377,10 @@ export const AdminPage = () => {
             {analytics.topEvents.length === 0 ? (
               <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem' }}>
                 No events recorded yet.
+              </p>
+            ) : (analytics.totalBookings ?? analytics.totalRegistrations ?? 0) === 0 ? (
+              <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem' }}>
+                No registrations yet.
               </p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -323,8 +425,36 @@ export const AdminPage = () => {
 
             {analytics.registrationsByCategory.length === 0 ? (
               <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem' }}>
-                No registrations logged yet.
+                No categories recorded yet.
               </p>
+            ) : (analytics.totalBookings ?? analytics.totalRegistrations ?? 0) === 0 ? (
+              <div>
+                <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                  No registrations yet.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {analytics.registrationsByCategory.map((c) => (
+                    <div
+                      key={c.category}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '0.75rem 1rem',
+                        backgroundColor: 'var(--bg)',
+                        border: '2px solid var(--border)',
+                        borderRadius: 'var(--radius-btn)',
+                        boxShadow: '2px 2px 0 var(--border)',
+                      }}
+                    >
+                      <span className="badge badge-tech">{c.category}</span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.9rem', color: 'var(--muted)' }}>
+                        0 ATTENDEES
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {analytics.registrationsByCategory.map((c) => (

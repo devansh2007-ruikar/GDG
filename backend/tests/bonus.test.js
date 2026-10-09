@@ -110,6 +110,10 @@ describe('Bonus Features: QR Codes, Admin Analytics, and Scheduled Reminders', (
       expect(typeof res.body.data.totalEvents).toBe('number');
       expect(typeof res.body.data.totalUsers).toBe('number');
       expect(typeof res.body.data.totalRegistrations).toBe('number');
+      expect(typeof res.body.data.registeredUsers).toBe('number');
+      expect(typeof res.body.data.totalBookings).toBe('number');
+      expect(typeof res.body.data.uniqueAttendees).toBe('number');
+      expect(typeof res.body.data.upcomingEvents).toBe('number');
       expect(Array.isArray(res.body.data.topEvents)).toBe(true);
       expect(Array.isArray(res.body.data.registrationsByCategory)).toBe(true);
     });
