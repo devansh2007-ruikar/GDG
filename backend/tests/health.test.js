@@ -17,6 +17,7 @@ describe('System & Health Check API', () => {
     expect(res.body.data).toEqual({
       name: 'GDG Event Management & Registration API',
       version: '1.0.0',
+      author: 'Devansh Ruikar',
       status: 'running',
       docs: '/api/docs',
       health: '/api/health',

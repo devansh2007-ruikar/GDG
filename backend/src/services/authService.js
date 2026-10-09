@@ -65,22 +65,24 @@ const register = async ({ name, email, password }) => {
   };
 };
 
+// Pre-computed dummy bcrypt hash (10 salt rounds) for constant-time comparisons when email is not found
+const DUMMY_HASH = '$2b$10$7EqJtq98hPqEX7fNZaFWoOhiMbxZg8tH54/vL6T6c0FzHj2tX6Fw6';
+
 /**
  * Authenticate existing user
- * - Uses a generic error message for non-existent users AND bad passwords to prevent email enumeration
+ * - Timing-safe: always executes bcrypt.compare (against user hash or dummy hash) to prevent user enumeration via timing attacks
+ * - Uses a generic error message for non-existent users AND bad passwords to prevent email harvesting
  */
 const login = async ({ email, password }) => {
   const user = await prisma.user.findUnique({
     where: { email: email.toLowerCase() },
   });
 
-  // Generic message on user not found prevents email harvesting
-  if (!user) {
-    throw new AppError('Invalid email or password', 401, 'INVALID_CREDENTIALS');
-  }
+  // Always run bcrypt.compare to maintain constant execution time regardless of email existence
+  const hashToCompare = user ? user.passwordHash : DUMMY_HASH;
+  const isPasswordValid = await bcrypt.compare(password, hashToCompare);
 
-  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-  if (!isPasswordValid) {
+  if (!user || !isPasswordValid) {
     throw new AppError('Invalid email or password', 401, 'INVALID_CREDENTIALS');
   }
 

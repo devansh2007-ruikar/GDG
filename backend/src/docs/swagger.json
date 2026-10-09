@@ -3,7 +3,11 @@
   "info": {
     "title": "GDG Event Management & Registration API",
     "version": "1.0.0",
-    "description": "API documentation for the GDG Club Event Management and Registration platform."
+    "description": "API documentation for the GDG Club Event Management and Registration platform.",
+    "contact": {
+      "name": "Devansh Ruikar",
+      "url": "https://github.com/devansh2007-ruikar"
+    }
   },
   "servers": [
     {
@@ -64,6 +68,7 @@
                       "properties": {
                         "name": { "type": "string", "example": "GDG Event Management & Registration API" },
                         "version": { "type": "string", "example": "1.0.0" },
+                        "author": { "type": "string", "example": "Devansh Ruikar" },
                         "status": { "type": "string", "example": "running" },
                         "docs": { "type": "string", "example": "/api/docs" },
                         "health": { "type": "string", "example": "/api/health" },

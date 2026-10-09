@@ -1,11 +1,11 @@
 # 🚀 GDG Event Management & Registration Platform
 
-A production-grade, full-stack event discovery, registration, and administration platform built for the **Google Developer Groups (GDG) RBU** club recruitment technical task. Engineered for high concurrency with atomic database-level bookings, timing-safe authentication, live administrative analytics, and digital QR admission passes.
+A full-stack event discovery, registration, and administration platform built for the **Google Developer Groups (GDG) RBU** club recruitment technical task. Engineered with atomic database-level bookings to handle concurrent registrations, timing-safe authentication, live administrative analytics, and digital QR admission passes.
 
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![Prisma](https://img.shields.io/badge/Prisma-6.x-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![JWT](https://img.shields.io/badge/JWT-Auth-000000?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
@@ -19,11 +19,12 @@ A production-grade, full-stack event discovery, registration, and administration
 | Service | Live URL | Description |
 | :--- | :--- | :--- |
 | **Frontend Web App** | [https://gdg-iota-inky.vercel.app](https://gdg-iota-inky.vercel.app) | Responsive React UI hosted on Vercel |
-| **Backend API Base** | [https://gdg-oz97.onrender.com/api](https://gdg-oz97.onrender.com/api) | Express REST API hosted on Render |
+| **Backend Root (Redirect)** | [https://gdg-oz97.onrender.com/](https://gdg-oz97.onrender.com/) | Auto-redirects root URL directly to Swagger docs |
+| **Backend API Base (Index)** | [https://gdg-oz97.onrender.com/api](https://gdg-oz97.onrender.com/api) | Friendly JSON API discovery index & endpoints |
 | **Swagger API Docs** | [https://gdg-oz97.onrender.com/api/docs](https://gdg-oz97.onrender.com/api/docs) | Interactive OpenAPI 3.0 documentation |
 | **System Health Check** | [https://gdg-oz97.onrender.com/api/health](https://gdg-oz97.onrender.com/api/health) | Real-time service uptime & health status |
 | **GitHub Repository** | [https://github.com/devansh2007-ruikar/GDG](https://github.com/devansh2007-ruikar/GDG) | Source code repository |
-| **Cloud Database** | PostgreSQL hosted on Neon | Serverless PostgreSQL with connection pooling |
+| **Cloud Database** | PostgreSQL hosted on Neon | Serverless PostgreSQL (direct connection with SSL) |
 
 > ⏳ **Note for Reviewers**: The backend runs on Render's free tier and spins down when idle. It may take **~50 seconds** to wake up on the first request. Please open the [Health Check link](https://gdg-oz97.onrender.com/api/health) first to wake the server before testing.
 
@@ -171,7 +172,7 @@ Every required feature is fully implemented in code, documented, and covered by 
 | **User Registrations View** | Users view registered events sorted upcoming first, then past | ✅ Complete | [`backend/src/services/registrationService.js`](file:///home/devansh/Documents/GDG/backend/src/services/registrationService.js#L160) |
 | **Attendee Rosters (Admin)** | Administrators view full attendee roster (`name`, `email`, `registeredAt`) | ✅ Complete | [`backend/src/services/registrationService.js`](file:///home/devansh/Documents/GDG/backend/src/services/registrationService.js#L190) |
 | **React Frontend SPA** | Responsive client app: Event browsing, debounced search, details, ticket booking, attendee portal, admin management | ✅ Complete | [`frontend/src/pages/`](file:///home/devansh/Documents/GDG/frontend/src/pages/)<br>[`frontend/src/components/`](file:///home/devansh/Documents/GDG/frontend/src/components/) |
-| **Rate Limiting (Bonus)** | IP-based rate limiting on sensitive auth endpoints (15 req/15 min) | ✅ Complete | [`backend/src/middleware/rateLimiter.js`](file:///home/devansh/Documents/GDG/backend/src/middleware/rateLimiter.js) |
+| **Rate Limiting (Bonus)** | IP-based rate limiting on sensitive auth endpoints (5 req/min per IP) | ✅ Complete | [`backend/src/middleware/rateLimiter.js`](file:///home/devansh/Documents/GDG/backend/src/middleware/rateLimiter.js) |
 | **Docker Compose (Bonus)** | Multi-container setup orchestrating PostgreSQL 16, backend API, and Vite + Nginx frontend | ✅ Complete | [`docker-compose.yml`](file:///home/devansh/Documents/GDG/docker-compose.yml)<br>[`backend/Dockerfile`](file:///home/devansh/Documents/GDG/backend/Dockerfile)<br>[`frontend/Dockerfile`](file:///home/devansh/Documents/GDG/frontend/Dockerfile) |
 | **QR Code Tickets (Bonus)** | Base64 QR code generation (`qrcode`), secure owner/admin access, print modal on frontend | ✅ Complete | [`backend/src/services/qrService.js`](file:///home/devansh/Documents/GDG/backend/src/services/qrService.js)<br>[`frontend/src/components/QrTicketModal.jsx`](file:///home/devansh/Documents/GDG/frontend/src/components/QrTicketModal.jsx) |
 | **Admin Analytics (Bonus)** | Live computation of registered users, total bookings, unique attendees, upcoming events, top 5 fill rates, and domain breakdown | ✅ Complete | [`backend/src/services/analyticsService.js`](file:///home/devansh/Documents/GDG/backend/src/services/analyticsService.js)<br>[`frontend/src/pages/AdminPage.jsx`](file:///home/devansh/Documents/GDG/frontend/src/pages/AdminPage.jsx) |
@@ -196,7 +197,7 @@ Concurrency bugs like **overbooking** and **double-booking** typically happen du
 
 ### The Solution: Multi-Layered Concurrency Safety
 
-The platform eliminates race conditions entirely inside a single `prisma.$transaction`:
+The platform prevents overbooking and duplicate registrations during concurrent requests by combining atomic database updates with a compound unique constraint inside a single `prisma.$transaction`:
 
 ```text
 Incoming Request -> ACID Transaction
@@ -257,14 +258,14 @@ graph TD
         Service -.-> QR[QR Code Engine<br/>qrcode]
     end
     
-    Prisma -->|Pooled TCP / SSL| DB[(PostgreSQL 16<br/>Neon Serverless)]
+    Prisma -->|Direct TCP / SSL| DB[(PostgreSQL<br/>Neon Serverless)]
 ```
 
 ### Why This Stack?
 - **React 18 & Vite**: Fast client-side rendering with instant HMR and optimized production bundles.
 - **Node.js & Express 5**: Lightweight, event-driven async I/O ideal for high-throughput REST APIs.
 - **Prisma ORM**: Declarative schema definition, end-to-end type safety, and database-level field references.
-- **PostgreSQL (Neon)**: ACID transaction compliance, row-level write locks for concurrency, and serverless auto-scaling.
+- **PostgreSQL (Neon)**: ACID transaction compliance, row-level write locks for concurrency, and serverless scalability.
 - **Zod**: Composable schema validation with fail-fast error formatting.
 - **JWT & Bcrypt**: Stateless session verification with adaptive salted password hashing.
 
@@ -325,7 +326,9 @@ Interactive documentation with runnable requests is hosted live at **[https://gd
 
 | Method | Endpoint | Auth | Role | Description |
 | :--- | :--- | :---: | :---: | :--- |
-| **System** | | | | |
+| **System & Discovery** | | | | |
+| `GET` | `/` | None | Public | Root redirect: 302 redirects straight to interactive Swagger docs (`/api/docs`) |
+| `GET` | `/api` | None | Public | API index: Returns metadata, status, version, docs/health links, and resource endpoints |
 | `GET` | `/api/health` | None | Public | Health status, uptime, timestamp, environment |
 | `GET` | `/api/docs` | None | Public | Interactive Swagger / OpenAPI documentation UI |
 | **Authentication** | | | | |
@@ -377,13 +380,13 @@ All errors return a predictable JSON envelope with appropriate HTTP status codes
 | **403** | `FORBIDDEN` | Authenticated user lacks required permission / role |
 | **404** | `EVENT_NOT_FOUND` | Event ID does not exist in the database |
 | **404** | `NOT_REGISTERED` | Attempting to unregister from an event not booked by the user |
-| **404** | `ROUTE_NOT_FOUND` | Requested HTTP path does not exist on the server |
+| **404** | `NOT_FOUND` | Requested route or user resource does not exist on the server |
 | **409** | `EMAIL_EXISTS` | Registration attempt with an email that is already registered |
 | **409** | `ALREADY_REGISTERED` | User is already registered for this event (duplicate violation) |
 | **409** | `EVENT_FULL` | Event has reached maximum capacity (`registeredCount == capacity`) |
 | **409** | `CAPACITY_TOO_LOW` | Admin attempted to lower capacity below current registered attendees |
 | **422** | `VALIDATION_ERROR` | Request payload failed Zod schema validation (field-level details included) |
-| **429** | `TOO_MANY_REQUESTS` | Rate limit threshold exceeded on `/api/auth/*` (15 requests per 15 minutes) |
+| **429** | `TOO_MANY_REQUESTS` | Rate limit threshold exceeded on `/api/auth/*` (5 requests per 60 seconds per IP) |
 | **500** | `INTERNAL_SERVER_ERROR`| Unhandled server exception (stack traces hidden from production clients) |
 
 ---
@@ -391,12 +394,12 @@ All errors return a predictable JSON envelope with appropriate HTTP status codes
 ## 🛡️ Security
 
 - **Password Hashing**: Passwords hashed with `bcrypt` using 10 salt rounds before storage.
-- **Timing-Safe Auth**: Login failures return generic `"Invalid email or password"` error messages for non-existent emails and wrong passwords alike to prevent user enumeration attacks.
+- **Timing-Safe Authentication**: Constant-time password verification using `bcrypt.compare` against either the user's password hash or a precomputed dummy hash, paired with uniform `"Invalid email or password"` error responses to prevent user enumeration via side-channel timing analysis.
 - **Stateless Tokens**: JWTs signed with `HS256`, strictly validated per request, expiring in 7 days.
 - **Role-Based Access Control**: Route-level `authorize('ADMIN')` guards enforce privileges. Client-side attempts to escalate role during registration are ignored (role is explicitly forced to `USER`).
 - **HTTP Security Headers**: Powered by `helmet` to set secure response headers (HSTS, X-Content-Type-Options, Frameguard).
 - **CORS Protection**: Cross-Origin requests restricted to authorized frontend domains via `CLIENT_URL`.
-- **Brute-Force Rate Limiting**: Auth endpoints protected by `express-rate-limit` (15 requests per 15-minute window).
+- **Brute-Force Rate Limiting**: Auth endpoints protected by `express-rate-limit` (5 requests per 60-second window per IP).
 - **Strict Input Validation**: All inputs parsed and sanitized with `zod` schemas before touching controllers.
 - **Zero Information Leakage**: Centralized error middleware masks internal database errors from API clients.
 
@@ -498,21 +501,21 @@ cd backend
 npm test
 ```
 
-### Test Suite Summary (52 Tests, 7 Suites — 100% Passing)
+### Test Suite Summary (54 Tests, 7 Suites — 100% Passing)
 
-- `tests/auth.test.js`: User registration, role escalation rejection, duplicate email handling, login validation, protected routes, and RBAC authorization.
+- `tests/auth.test.js`: User registration, role escalation rejection, duplicate email handling, login validation, timing-safe auth, protected routes, and RBAC authorization.
 - `tests/events.test.js`: Event discovery, multi-parameter search, category filter, pagination, single event view, admin create/update/delete, and capacity invariant enforcement.
 - `tests/registrations.test.js`: Authentication requirement, past-event rejection, registration success, duplicate registration rejection, capacity bounds, self-service cancellation, user registration history, and admin attendee rosters.
 - `tests/concurrency.test.js`: High-concurrency race simulation (20 simultaneous users competing for 5 seats -> exactly 5 succeed, 15 get `409 EVENT_FULL`, DB count = 5).
 - `tests/bonus.test.js`: Scannable QR code tickets, admin platform analytics calculation, and hourly cron reminder dispatch with idempotency checking.
-- `tests/health.test.js`: Health endpoint response and unmatched route 404 handler.
+- `tests/health.test.js`: System health check response, API discovery index (`/api`), root redirect (`/`), and unmatched route 404 handler.
 - `tests/rateLimiter.test.js`: Rate limiter threshold enforcement on authentication endpoints.
 
 ---
 
 ## 🚀 Deployment
 
-- **Database**: PostgreSQL hosted on [Neon](https://neon.tech) (serverless PostgreSQL with connection pooling and SSL encryption).
+- **Database**: PostgreSQL hosted on [Neon](https://neon.tech) (serverless PostgreSQL with direct connection and SSL encryption).
 - **Backend**: Hosted on [Render](https://render.com) as a Web Service. The start command runs `prisma migrate deploy && node src/server.js`, automatically applying any pending database migrations before starting the Express server.
 - **Frontend**: Hosted on [Vercel](https://vercel.com) as a Vite single-page application. Configured with [`frontend/vercel.json`](file:///home/devansh/Documents/GDG/frontend/vercel.json) client-side rewrites (`/(.*) -> /index.html`) so refreshing direct sub-routes (such as `/events/:id` or `/my-registrations`) does not result in 404 errors.
 
@@ -570,13 +573,25 @@ GDG/
 
 ## 📸 Screenshots
 
-| View | Screenshot |
-| :--- | :--- |
-| **Events Discovery** | ![Events View](docs/screenshots/events.png)<br>*(Browse events with real-time seat availability and multi-param filters)* |
-| **Event Details & Booking** | ![Event Details](docs/screenshots/event-details.png)<br>*(Comprehensive event details, status indicators, and one-click booking)* |
-| **My Registrations & QR Passes** | ![My Registrations](docs/screenshots/my-registrations.png)<br>*(Attendee portal with digital admission QR code modals)* |
-| **Admin Command Center** | ![Admin Dashboard](docs/screenshots/admin-dashboard.png)<br>*(Live metrics, fill-rate rankings, category breakdown, and event directory)* |
-| **Interactive Swagger Docs** | ![Swagger UI](docs/screenshots/swagger.png)<br>*(Interactive OpenAPI 3.0 testing interface with persistent Bearer authorization)* |
+### Events Discovery
+![Events](docs/screenshots/events.png)
+*Browse campus events with real-time seat availability, debounced keyword search, category pills, and date filters.*
+
+### Attendee Portal
+![My Registrations](docs/screenshots/my-registrations.png)
+*Dedicated attendee dashboard displaying reserved event passes and registration management.*
+
+### Admin Command Center & Metrics
+![Admin Dashboard](docs/screenshots/admin-dashboard.png)
+*Real-time administrative overview with live platform metrics, fill-rate tracking, and category distribution.*
+
+### Admin Events Directory
+![Admin Events](docs/screenshots/admin-events.png)
+*Administrative event management directory with controls for viewing attendee rosters, editing event parameters, and deletion.*
+
+### Platform Navigation & Developer Links
+![Platform Footer](docs/screenshots/footer.png)
+*Footer navigation providing quick links to interactive Swagger documentation, system health monitoring, and the GitHub repository.*
 
 ---
 
