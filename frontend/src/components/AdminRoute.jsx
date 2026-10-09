@@ -1,17 +1,14 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { LoadingScreen } from './LoadingScreen';
 
 export const AdminRoute = ({ children }) => {
   const { user, loading, isAdmin } = useAuth();
   const location = useLocation();
 
   if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <div className="spinner" style={{ width: 36, height: 36, borderWidth: 3 }}></div>
-      </div>
-    );
+    return <LoadingScreen message="Verifying administrative privileges..." />;
   }
 
   if (!user) {

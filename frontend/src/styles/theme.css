@@ -51,3 +51,26 @@
   --shadow-lg: 6px 6px 0 #FFFFFF;
   --shadow-hover: 6px 6px 0 #FFFFFF;
 }
+
+/* ==========================================================================
+   OFFICIAL GDG LOGO STYLING
+   ========================================================================== */
+.gdg-logo {
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: none !important; /* Keep authentic logo colors identical in light and dark mode */
+}
+
+.gdg-logo:hover {
+  transform: scale(1.03);
+}
+
+@media (max-width: 640px) {
+  .gdg-logo {
+    width: 58px !important;
+    height: 31px !important;
+  }
+}
+

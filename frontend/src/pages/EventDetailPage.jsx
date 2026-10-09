@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, MapPin, Users, CheckCircle2, AlertCircle } from 'l
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { LoadingScreen } from '../components/LoadingScreen';
 
 export const EventDetailPage = () => {
   const { id } = useParams();
@@ -34,14 +35,7 @@ export const EventDetailPage = () => {
   }, [id, error, navigate]);
 
   if (loading) {
-    return (
-      <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center' }}>
-        <div className="spinner" style={{ width: 44, height: 44, borderWidth: 4 }}></div>
-        <p style={{ marginTop: '1.25rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-          Loading event details...
-        </p>
-      </div>
-    );
+    return <LoadingScreen message="Loading event details..." />;
   }
 
   if (!event) return null;

@@ -494,7 +494,17 @@ export const AdminPage = () => {
       {/* Directory Table with Yellow Header */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
-          <span className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
+          <img
+            src="/gdg-logo.svg"
+            alt="GDG RBU logo"
+            width="72"
+            height="38"
+            className="gdg-logo"
+            style={{ marginBottom: '1.25rem', opacity: 0.95 }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <span className="spinner" style={{ width: 34, height: 34, borderWidth: 3 }}></span>
+          </div>
           <p style={{ marginTop: '1rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
             Loading event records...
           </p>

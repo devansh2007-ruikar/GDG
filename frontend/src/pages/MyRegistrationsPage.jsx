@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { QrTicketModal } from '../components/QrTicketModal';
+import { LoadingScreen } from '../components/LoadingScreen';
 
 export const MyRegistrationsPage = () => {
   const [registrations, setRegistrations] = useState([]);
@@ -64,14 +65,7 @@ export const MyRegistrationsPage = () => {
   const past = registrations.filter((r) => new Date(r.event.dateTime).getTime() <= now);
 
   if (loading) {
-    return (
-      <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center' }}>
-        <div className="spinner" style={{ width: 44, height: 44, borderWidth: 4 }}></div>
-        <p style={{ marginTop: '1.25rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-          Loading your registered event passes...
-        </p>
-      </div>
-    );
+    return <LoadingScreen message="Loading your registered event passes..." />;
   }
 
   return (

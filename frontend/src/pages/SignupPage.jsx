@@ -61,23 +61,28 @@ export const SignupPage = () => {
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div 
-            style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              backgroundColor: 'var(--green)', 
-              color: '#000', 
-              border: '2px solid var(--border)', 
-              padding: '0.25rem 0.75rem', 
-              borderRadius: 'var(--radius-pill)',
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 800,
-              fontSize: '0.75rem',
-              marginBottom: '1rem',
-            }}
-          >
-            <Sparkles size={12} /> NEW MEMBERSHIP
+          <Link to="/events" title="Return to GDG Events" style={{ display: 'inline-block', marginBottom: '1.25rem' }}>
+            <img src="/gdg-logo.svg" alt="GDG RBU logo" width="72" height="38" className="gdg-logo" />
+          </Link>
+          <div>
+            <div 
+              style={{ 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '0.4rem', 
+                backgroundColor: 'var(--green)', 
+                color: '#000', 
+                border: '2px solid var(--border)', 
+                padding: '0.25rem 0.75rem', 
+                borderRadius: 'var(--radius-pill)',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 800,
+                fontSize: '0.75rem',
+                marginBottom: '1rem',
+              }}
+            >
+              <Sparkles size={12} /> NEW MEMBERSHIP
+            </div>
           </div>
           <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem', lineHeight: 1.1 }}>
             Join GDG RBU
