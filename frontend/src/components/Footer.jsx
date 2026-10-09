@@ -2,6 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Terminal, Code2, Heart } from 'lucide-react';
 
+const GithubIcon = ({ size = 13 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+  </svg>
+);
+
 export const Footer = () => {
   return (
     <footer
@@ -154,26 +160,90 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom copyright & attribution */}
+        {/* Visible Neo-Brutalist Creator Credit Bar */}
         <div
           style={{
-            borderTop: '1px solid var(--grid)',
-            paddingTop: '1.5rem',
+            borderTop: '2px solid var(--border)',
+            paddingTop: '1.25rem',
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
             gap: '1rem',
-            fontSize: '0.8rem',
-            fontFamily: 'var(--font-mono)',
-            color: 'var(--muted)',
           }}
         >
-          <div>
-            Built for <strong>GDG RBU Technical Task</strong> • 2026-27
+          <div
+            style={{
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span>Built with ❤️ by</span>
+            <a
+              href="https://github.com/devansh2007-ruikar"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: 'inherit',
+                fontWeight: 800,
+                textDecoration: 'underline',
+                textUnderlineOffset: '3px',
+              }}
+            >
+              Devansh Ruikar
+            </a>
+            <span>for <strong>GDG RBU Recruitment 2026-27</strong></span>
           </div>
-          <div>
-            Engineered with React 18, Express 5, Prisma & PostgreSQL
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <a
+              href="https://github.com/devansh2007-ruikar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-outline btn-sm"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontSize: '0.75rem',
+                fontFamily: 'var(--font-mono)',
+                padding: '0.3rem 0.65rem',
+              }}
+              title="Devansh Ruikar on GitHub"
+            >
+              <GithubIcon size={13} />
+              <span>@devansh2007-ruikar</span>
+            </a>
+
+            <a
+              href="https://github.com/devansh2007-ruikar/GDG"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-outline btn-sm"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontSize: '0.75rem',
+                fontFamily: 'var(--font-mono)',
+                padding: '0.3rem 0.65rem',
+              }}
+              title="Project Source Code"
+            >
+              <Code2 size={13} />
+              <span>Repository</span>
+            </a>
           </div>
         </div>
       </div>

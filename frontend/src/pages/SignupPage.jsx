@@ -48,7 +48,7 @@ export const SignupPage = () => {
   };
 
   return (
-    <div className="container" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
+    <div className="container" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
       <div 
         className="card" 
         style={{ 
@@ -152,6 +152,19 @@ export const SignupPage = () => {
             Sign In here
           </Link>
         </div>
+      </div>
+
+      {/* Creator Credit under Card */}
+      <div
+        style={{
+          marginTop: '1.25rem',
+          textAlign: 'center',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.8rem',
+          color: 'var(--muted)',
+        }}
+      >
+        Designed & developed by <strong>Devansh Ruikar</strong>
       </div>
     </div>
   );
