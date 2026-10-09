@@ -36,5 +36,12 @@
     "jest": "^30.5.2",
     "nodemon": "^3.1.14",
     "supertest": "^7.3.1"
+  },
+  "allowScripts": {
+    "prisma@6.4.1": true,
+    "@prisma/client@6.4.1": true,
+    "@prisma/engines@6.4.1": true,
+    "bcrypt@6.0.0": true,
+    "esbuild@0.28.2": true
   }
 }
