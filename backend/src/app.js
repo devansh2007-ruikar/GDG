@@ -65,6 +65,11 @@ const swaggerUiOptions = {
 };
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerUiOptions));
 
+// Root redirect to Swagger UI
+app.get('/', (req, res) => {
+  return res.redirect('/api/docs');
+});
+
 // 6. API Routes
 app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);

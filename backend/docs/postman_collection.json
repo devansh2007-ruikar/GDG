@@ -32,6 +32,17 @@
       "name": "System",
       "item": [
         {
+          "name": "API Index",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            }
+          }
+        },
+        {
           "name": "Health Check",
           "request": {
             "method": "GET",

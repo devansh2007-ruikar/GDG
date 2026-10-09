@@ -21,6 +21,71 @@
     }
   },
   "paths": {
+    "/": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Root URL redirect",
+        "description": "Redirects root URL requests directly to the interactive Swagger API documentation (/api/docs).",
+        "servers": [
+          {
+            "url": "/",
+            "description": "Server root"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to /api/docs"
+          }
+        }
+      }
+    },
+    "/api": {
+      "get": {
+        "tags": ["System"],
+        "summary": "API index & discovery",
+        "description": "Returns API metadata, version, status, docs and health references, and primary resource endpoints.",
+        "servers": [
+          {
+            "url": "/",
+            "description": "Server root"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API operational index",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string", "example": "GDG Event Management & Registration API" },
+                        "version": { "type": "string", "example": "1.0.0" },
+                        "status": { "type": "string", "example": "running" },
+                        "docs": { "type": "string", "example": "/api/docs" },
+                        "health": { "type": "string", "example": "/api/health" },
+                        "endpoints": {
+                          "type": "object",
+                          "properties": {
+                            "auth": { "type": "string", "example": "/api/auth" },
+                            "events": { "type": "string", "example": "/api/events" },
+                            "myRegistrations": { "type": "string", "example": "/api/users/me/registrations" }
+                          }
+                        },
+                        "frontend": { "type": "string", "example": "https://gdg-iota-inky.vercel.app" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": ["System"],
