@@ -4,14 +4,28 @@ A production-grade, full-stack event discovery, registration, and administration
 
 ---
 
+## 🌐 Live Demo
+
+| Service | Live URL | Description |
+| :--- | :--- | :--- |
+| **Frontend Web App (Vercel)** | [https://gdg-events.vercel.app](https://gdg-events.vercel.app) | Interactive client app (Space Grotesk typography & Neo-brutalist theme). |
+| **Backend API (Render)** | [https://gdg-backend.onrender.com](https://gdg-backend.onrender.com) | Express REST API powered by Neon.tech PostgreSQL. |
+| **Swagger Documentation** | [https://gdg-backend.onrender.com/api/docs](https://gdg-backend.onrender.com/api/docs) | Interactive OpenAPI 3.0 documentation with persistent Bearer auth. |
+
+> **Note**: Free-tier cloud instances on Render may sleep after inactivity; please allow a brief moment (~30-50s) for the initial spin-up request.
+
+---
+
 ## 📑 Table of Contents
 
+- [Live Demo](#-live-demo)
 - [Features List](#-features-list)
 - [Tech Stack & Decision Rationale](#-tech-stack--decision-rationale)
 - [System Architecture](#-system-architecture)
 - [Database Schema (ER Diagram)](#-database-schema-er-diagram)
 - [Concurrency Safety: Preventing Duplicates & Overbooking](#-concurrency-safety-preventing-duplicates--overbooking)
-- [Setup Instructions](#-setup-instructions)
+- [Deployment Guide (Render + Vercel + Neon.tech)](#-deployment-guide-render--vercel--neontech)
+- [Setup Instructions (Local & Docker)](#-setup-instructions)
   - [Option A: One-Command Docker Setup (Recommended)](#option-a-one-command-docker-setup-recommended)
   - [Option B: Local Development Setup (npm)](#option-b-local-development-setup-npm)
 - [Environment Variables](#-environment-variables)
@@ -195,7 +209,69 @@ In `backend/tests/concurrency.test.js`, we simulate extreme real-world contentio
 
 ---
 
-## 🚀 Setup Instructions
+## ☁️ Deployment Guide (Render + Vercel + Neon.tech)
+
+Follow this step-by-step guide to deploy the entire stack to production for free with zero wiped data.
+
+### Step 1: Create a Free PostgreSQL Database on Neon.tech
+1. Sign up / Log in to [Neon.tech](https://neon.tech).
+2. Click **Create Project**, choose a project name (e.g. `gdg-events`), and select the region closest to your users.
+3. Once created, copy the provided **PostgreSQL Connection String**. It looks like:
+   ```text
+   postgresql://neondb_owner:npg_xxxx@ep-cool-sample.us-east-2.aws.neon.tech/neondb?sslmode=require
+   ```
+4. Save this connection string — you will use it as `DATABASE_URL` on Render.
+
+---
+
+### Step 2: Deploy Backend to Render
+1. Sign in to [Render](https://render.com) and click **New +** -> **Web Service**.
+2. Connect your GitHub repository (`devansh2007-ruikar/GDG`).
+3. Configure the service settings:
+   - **Name**: `gdg-backend` (or your preferred name)
+   - **Root Directory**: `backend`
+   - **Environment**: `Node`
+   - **Region**: Same region as your Neon database (e.g. US East)
+   - **Branch**: `main`
+   - **Build Command**: `npm install && npx prisma generate`
+   - **Start Command**: `npm start` *(runs `prisma migrate deploy && node src/server.js`)*
+   - **Instance Type**: `Free`
+4. Under **Environment Variables**, add:
+   | Key | Value |
+   | :--- | :--- |
+   | `NODE_ENV` | `production` |
+   | `DATABASE_URL` | *Your Neon PostgreSQL connection string from Step 1* |
+   | `JWT_SECRET` | *A strong random secret string (min 32 chars)* |
+   | `JWT_EXPIRES_IN` | `7d` |
+   | `CLIENT_URL` | `https://<your-app>.vercel.app` *(or temporary `*` until Vercel URL is known)* |
+5. Click **Create Web Service**. Render will install dependencies, generate the Prisma engine, automatically run `prisma migrate deploy`, and launch the Express server.
+6. Optional: To seed the database with initial events and demo users, open the Render **Shell** tab and run:
+   ```bash
+   node prisma/seed.js
+   ```
+7. Note down your Render service URL (e.g., `https://gdg-backend.onrender.com`).
+
+---
+
+### Step 3: Deploy Frontend to Vercel
+1. Sign in to [Vercel](https://vercel.com) and click **Add New...** -> **Project**.
+2. Import the GitHub repository (`devansh2007-ruikar/GDG`).
+3. In the project configuration:
+   - **Framework Preset**: `Vite`
+   - **Root Directory**: Click *Edit* and select **`frontend`**
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+4. Expand **Environment Variables** and add:
+   | Key | Value |
+   | :--- | :--- |
+   | `VITE_API_URL` | `https://<your-backend>.onrender.com/api` |
+5. Click **Deploy**.
+6. The included [`frontend/vercel.json`](file:///home/devansh/Documents/GDG/frontend/vercel.json) rewrite rule (`/(.*) -> /index.html`) automatically guarantees that direct navigation or browser refreshes on sub-routes (e.g. `/events/:id`, `/my-registrations`, `/admin`) resolve to the single-page application without 404 errors.
+7. Once deployed, copy your production Vercel URL (e.g. `https://gdg-events.vercel.app`), return to your **Render Dashboard**, and update `CLIENT_URL` to match this URL for strict CORS security.
+
+---
+
+## 🚀 Setup Instructions (Local & Docker)
 
 ### Option A: One-Command Docker Setup (Recommended)
 
@@ -232,7 +308,7 @@ cd backend
 # Install dependencies
 npm install
 
-# Initialize local SQLite database and seed demo data
+# Initialize database schema and seed demo data
 npx prisma db push
 node prisma/seed.js
 
@@ -257,24 +333,26 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## 🔑 Environment Variables
 
-### Backend (`/backend/.env`)
+### Backend (`/backend/.env` or Render Dashboard)
 
 | Variable | Default Value | Required | Description |
 | :--- | :--- | :---: | :--- |
-| `PORT` | `5000` | No | HTTP port for the Express application server. |
-| `DATABASE_URL` | `file:./dev.db` | Yes | Connection string for SQLite (`file:./dev.db`) or PostgreSQL (`postgresql://...`). |
+| `PORT` | `5000` | No | HTTP port for the Express server (set automatically on Render). |
+| `DATABASE_URL` | *Neon PostgreSQL URL* | Yes | PostgreSQL connection string (`postgresql://...`). |
 | `JWT_SECRET` | *(Random 32-char secret)* | Yes | Secret key used to sign and verify JSON Web Tokens. |
 | `JWT_EXPIRES_IN` | `7d` | No | Token expiration duration (e.g. `24h`, `7d`). |
-| `CLIENT_URL` | `http://localhost:5173` | Yes | Allowed Origin URL configured in CORS security middleware. |
+| `CLIENT_URL` | `http://localhost:5173` | Yes | Vercel frontend URL allowed in CORS (supports comma-separated origins). |
 | `NODE_ENV` | `development` | No | Environment mode (`development`, `production`, `test`). |
 
-*A template is provided in `backend/.env.example`.*
+*A template is provided in [`backend/.env.example`](file:///home/devansh/Documents/GDG/backend/.env.example).*
 
-### Frontend (`/frontend/.env`)
+### Frontend (`/frontend/.env` or Vercel Dashboard)
 
 | Variable | Default Value | Required | Description |
 | :--- | :--- | :---: | :--- |
-| `VITE_API_URL` | `http://localhost:5000/api` | No | Base URL for the backend API consumed by Axios. |
+| `VITE_API_URL` | `http://localhost:5000/api` | Yes | Full base URL for backend API (e.g. `https://gdg-backend.onrender.com/api`). |
+
+*A template is provided in [`frontend/.env.example`](file:///home/devansh/Documents/GDG/frontend/.env.example).*
 
 *A template is provided in `frontend/.env.example`.*
 

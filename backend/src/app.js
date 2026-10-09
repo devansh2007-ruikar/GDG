@@ -20,10 +20,31 @@ const app = express();
 // 1. Security HTTP headers
 app.use(helmet());
 
-// 2. Cross-Origin Resource Sharing (CORS) restricted to client URL
+// 2. Cross-Origin Resource Sharing (CORS) allowing client URL from CLIENT_URL env
+const getAllowedOrigins = () => {
+  const defaultOrigins = ['http://localhost:5173', 'http://localhost:3000'];
+  if (!config.clientUrl) return defaultOrigins;
+
+  const envOrigins = config.clientUrl
+    .split(',')
+    .map((url) => url.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
+
+  return Array.from(new Set([...envOrigins, ...defaultOrigins]));
+};
+
 app.use(
   cors({
-    origin: config.clientUrl,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, Swagger UI)
+      if (!origin) return callback(null, true);
+      const cleanOrigin = origin.replace(/\/+$/, '');
+      const allowedOrigins = getAllowedOrigins();
+      if (allowedOrigins.includes('*') || allowedOrigins.includes(cleanOrigin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
   })
 );
