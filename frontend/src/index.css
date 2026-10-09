@@ -14,7 +14,7 @@ html {
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   background-color: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -31,22 +31,36 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Headings: Pixelify Sans, UPPERCASE */
+/* Headings: Space Grotesk, 700, -0.02em, line-height 1.1 */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.hero-title {
   font-family: var(--font-heading);
   text-transform: uppercase;
   letter-spacing: -0.02em;
   font-weight: 700;
-  color: var(--text);
-  line-height: 1.2;
+  line-height: 1.1;
+}
+
+.card-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 p, span, label, small {
   color: inherit;
 }
 
-/* Paragraphs & Meta text in Geist Mono */
-p, .meta-text, .date-text, .mono-text {
+/* Dates, venue, seat counts and meta text use --font-mono */
+p, .meta-text, .date-text, .mono-text, .venue-text, .seat-text {
   font-family: var(--font-mono);
 }
 
@@ -71,7 +85,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 0.95rem;
   padding: 0.65rem 1.25rem;
@@ -319,7 +333,7 @@ a {
 }
 
 .nav-pill-btn {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 0.875rem;
   padding: 0.45rem 1.1rem;

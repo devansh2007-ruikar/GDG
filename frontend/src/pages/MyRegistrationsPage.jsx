@@ -99,8 +99,8 @@ export const MyRegistrationsPage = () => {
           <Ticket size={14} /> ATTENDEE PORTAL
         </div>
 
-        <h1 style={{ fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>
-          MY REGISTRATIONS
+        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '0.5rem' }}>
+          My Registrations
         </h1>
         <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '1.05rem' }}>
           Manage your upcoming passes, generate admission QR codes, and review past events.
@@ -119,8 +119,8 @@ export const MyRegistrationsPage = () => {
           }}
         >
           <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🎟️</div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-            NO ACTIVE RESERVATIONS
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '0.5rem' }}>
+            No Active Reservations
           </h2>
           <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginBottom: '1.75rem', fontSize: '0.95rem' }}>
             You haven't reserved a seat for any upcoming GDG sessions yet.
@@ -134,7 +134,7 @@ export const MyRegistrationsPage = () => {
           {/* Upcoming Section */}
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700 }}>UPCOMING EVENTS</h2>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.1 }}>Upcoming Events</h2>
               <span className="badge badge-tech">{upcoming.length}</span>
             </div>
 
@@ -253,7 +253,7 @@ export const MyRegistrationsPage = () => {
           {/* Past Section */}
           <section>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--muted)' }}>PAST ATTENDED EVENTS</h2>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.1, color: 'var(--muted)' }}>Past Attended Events</h2>
               <span className="badge badge-default">{past.length}</span>
             </div>
 

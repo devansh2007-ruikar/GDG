@@ -188,12 +188,14 @@ export const EventDetailPage = () => {
             )}
           </div>
 
-          {/* Big Pixel Heading */}
+          {/* Event Title */}
           <h1 
             style={{ 
+              fontFamily: 'var(--font-heading)',
               fontSize: '2.8rem', 
               fontWeight: 700, 
-              lineHeight: 1.15, 
+              letterSpacing: '-0.02em',
+              lineHeight: 1.1, 
               marginBottom: '1.25rem',
               color: 'var(--text)',
             }}

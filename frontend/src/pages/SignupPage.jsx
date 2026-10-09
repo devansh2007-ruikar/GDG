@@ -79,8 +79,8 @@ export const SignupPage = () => {
           >
             <Sparkles size={12} /> NEW MEMBERSHIP
           </div>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem' }}>
-            JOIN GDG RBU
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem', lineHeight: 1.1 }}>
+            Join GDG RBU
           </h1>
           <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.925rem' }}>
             Connect with our developer community and claim seats.

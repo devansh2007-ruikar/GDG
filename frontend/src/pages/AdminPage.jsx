@@ -114,8 +114,8 @@ export const AdminPage = () => {
           >
             🛡️ GDG RBU • COMMAND CENTER
           </div>
-          <h1 style={{ fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.4rem' }}>
-            EVENT ADMINISTRATION
+          <h1 style={{ fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.4rem', lineHeight: 1.1 }}>
+            Event Administration
           </h1>
           <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '1.05rem' }}>
             Live platform metrics, capacity tracking, and attendee roster management.
@@ -273,7 +273,7 @@ export const AdminPage = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
               <Flame size={20} color="var(--red)" />
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 700 }}>TOP EVENTS BY FILL RATE</h2>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700, lineHeight: 1.1 }}>Top Events by Fill Rate</h2>
             </div>
 
             {analytics.topEvents.length === 0 ? (
@@ -318,7 +318,7 @@ export const AdminPage = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
               <BarChart3 size={20} color="var(--blue)" />
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 700 }}>REGISTRATIONS BY DOMAIN</h2>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700, lineHeight: 1.1 }}>Registrations by Domain</h2>
             </div>
 
             {analytics.registrationsByCategory.length === 0 ? (
@@ -355,7 +355,7 @@ export const AdminPage = () => {
 
       {/* Directory Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>EVENTS DIRECTORY</h2>
+        <h2 style={{ fontSize: '1.8rem', fontWeight: 700, lineHeight: 1.1 }}>Events Directory</h2>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--muted)' }}>
           {events.length} TOTAL MANAGED
         </span>

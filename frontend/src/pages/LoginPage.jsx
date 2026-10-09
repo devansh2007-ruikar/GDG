@@ -76,8 +76,8 @@ export const LoginPage = () => {
           >
             <KeyRound size={12} /> AUTHENTICATION
           </div>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem' }}>
-            MEMBER SIGN IN
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem', lineHeight: 1.1 }}>
+            Member Sign In
           </h1>
           <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.925rem' }}>
             Access event passes and administrative portals.

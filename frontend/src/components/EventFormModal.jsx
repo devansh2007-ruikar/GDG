@@ -108,8 +108,8 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
         <div className="modal-header" style={{ borderBottom: '2px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Sparkles size={20} color="var(--blue)" />
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-              {isEditing ? 'EDIT EVENT' : 'CREATE EVENT'}
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              {isEditing ? 'Edit Event' : 'Create Event'}
             </h2>
           </div>
           <button 

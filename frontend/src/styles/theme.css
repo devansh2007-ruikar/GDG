@@ -29,9 +29,9 @@
   --radius-pill: 9999px;
 
   /* Typography */
-  --font-heading: 'Pixelify Sans', monospace, sans-serif;
-  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'Geist Mono', monospace;
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 /* ==========================================================================

@@ -74,14 +74,15 @@ export const EventCard = ({ event }) => {
         )}
       </div>
 
-      {/* Pixel Heading */}
+      {/* Card Title */}
       <h3 
         style={{ 
+          fontFamily: 'var(--font-heading)',
           fontSize: '1.35rem', 
           fontWeight: 700, 
           letterSpacing: '-0.02em', 
           marginBottom: '0.65rem', 
-          lineHeight: 1.25,
+          lineHeight: 1.1,
         }}
       >
         <Link to={`/events/${event.id}`} style={{ color: 'inherit' }}>

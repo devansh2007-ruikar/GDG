@@ -57,8 +57,8 @@ export const QrTicketModal = ({ registration, onClose }) => {
         {/* Header */}
         <div className="modal-header" style={{ marginBottom: '1.5rem', borderBottom: '2px solid var(--border)' }}>
           <div style={{ textAlign: 'left' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-              DIGITAL ADMISSION PASS
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              Digital Admission Pass
             </h2>
             <p style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
               OFFICIAL GDG EVENT TICKET
@@ -107,7 +107,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
                 <span className="badge badge-tech" style={{ marginBottom: '0.65rem' }}>
                   {ticketData.event.category}
                 </span>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 700, lineHeight: 1.25, color: 'var(--text)' }}>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 700, lineHeight: 1.1, color: 'var(--text)' }}>
                   {ticketData.event.title}
                 </h3>
               </div>

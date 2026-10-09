@@ -48,8 +48,8 @@ export const AttendeesModal = ({ event, onClose }) => {
       >
         <div className="modal-header" style={{ borderBottom: '2px solid var(--border)' }}>
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-              EVENT ATTENDEES
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              Event Attendees
             </h2>
             <p style={{ fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
               {event.title}

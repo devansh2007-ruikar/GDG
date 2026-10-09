@@ -37,7 +37,12 @@ if (config.nodeEnv !== 'test') {
 app.use(express.json());
 
 // 5. API Documentation
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const swaggerUiOptions = {
+  swaggerOptions: {
+    persistAuthorization: true,
+  },
+};
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerUiOptions));
 
 // 6. API Routes
 app.use('/api', healthRoutes);
