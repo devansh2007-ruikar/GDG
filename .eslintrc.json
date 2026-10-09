@@ -1,0 +1,41 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es2022": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-undef": "error"
+  },
+  "overrides": [
+    {
+      "files": ["backend/**/*.js"],
+      "parserOptions": {
+        "sourceType": "script"
+      },
+      "env": {
+        "node": true,
+        "commonjs": true
+      }
+    },
+    {
+      "files": ["frontend/**/*.{js,jsx}"],
+      "parserOptions": {
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "sourceType": "module"
+      },
+      "env": {
+        "browser": true
+      }
+    }
+  ]
+}

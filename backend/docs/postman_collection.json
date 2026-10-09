@@ -263,6 +263,20 @@
               "path": ["users", "me", "registrations"]
             }
           }
+        },
+        {
+          "name": "Get QR Code Ticket",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{userToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/registrations/{{registrationId}}/qr",
+              "host": ["{{baseUrl}}"],
+              "path": ["registrations", "{{registrationId}}", "qr"]
+            }
+          }
         }
       ]
     },
@@ -332,6 +346,20 @@
               "raw": "{{baseUrl}}/events/{{eventId}}",
               "host": ["{{baseUrl}}"],
               "path": ["events", "{{eventId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Platform Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "analytics"]
             }
           }
         }
