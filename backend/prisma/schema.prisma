@@ -1,0 +1,68 @@
+// Prisma schema for GDG Event Management API
+// SQLite is used for local development, easily swappable to PostgreSQL by updating provider & DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  role         Role           @default(USER)
+  createdAt    DateTime       @default(now())
+  
+  // Relations
+  events       Event[]        @relation("CreatedEvents")
+  registrations Registration[]
+}
+
+model Event {
+  id              String         @id @default(uuid())
+  title           String
+  description     String
+  dateTime        DateTime
+  venue           String
+  capacity        Int
+  category        String
+  registeredCount Int            @default(0)
+  
+  // Relations
+  createdById     String
+  createdBy       User           @relation("CreatedEvents", fields: [createdById], references: [id])
+  registrations   Registration[]
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Indexes to optimize sorting/filtering queries commonly used in event discovery
+  @@index([dateTime])
+  @@index([category])
+}
+
+model Registration {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  
+  // Cascade delete: if an event or user is deleted, associated registrations are cleaned up
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime  @default(now())
+  remindedAt DateTime?
+
+  // Prevents duplicate registrations at database level (idempotent / consistent)
+  @@unique([userId, eventId])
+}

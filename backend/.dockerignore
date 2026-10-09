@@ -1,0 +1,13 @@
+node_modules
+.env
+.env.test
+dev.db
+dev.db-journal
+test.db
+test.db-journal
+test.db-wal
+test.db-shm
+*.log
+coverage
+.git
+.gitignore
