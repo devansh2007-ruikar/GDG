@@ -1,0 +1,53 @@
+/* ==========================================================================
+   GDG RBU THEME TOKENS - NEO-BRUTALIST DESIGN SYSTEM
+   Matches https://www.gdgrbu.app aesthetic
+   ========================================================================== */
+
+:root {
+  /* Colors */
+  --bg: #FCFCF7;
+  --surface: #FFFFFF;
+  --text: #0A0A0A;
+  --muted: #555555;
+  --border: #000000;
+  --grid: #EDEDED;
+  --header-tint: #EEF3FE;
+
+  /* GDG Accent Palette */
+  --blue: #4C8DF6;
+  --red: #F86B5E;
+  --yellow: #FFC400;
+  --green: #00D26A;
+  --purple: #7B7FF6;
+
+  /* Brutalist Hard Shadows & Radii */
+  --shadow-sm: 4px 4px 0 var(--border);
+  --shadow-lg: 6px 6px 0 var(--border);
+  --shadow-hover: 6px 6px 0 var(--border);
+  --radius-btn: 8px;
+  --radius-card: 0px;
+  --radius-pill: 9999px;
+
+  /* Typography */
+  --font-heading: 'Pixelify Sans', monospace, sans-serif;
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+}
+
+/* ==========================================================================
+   DARK THEME OVERRIDES
+   ========================================================================== */
+[data-theme='dark'] {
+  --bg: #0F0F0F;
+  --surface: #171717;
+  --text: #F5F5F5;
+  --muted: #A0A0A0;
+  --border: #FFFFFF;
+  --grid: #1C1C1C;
+  --header-tint: #141C2B;
+
+  /* Shadows become crisp white hard blocks */
+  --shadow-sm: 4px 4px 0 #FFFFFF;
+  --shadow-lg: 6px 6px 0 #FFFFFF;
+  --shadow-hover: 6px 6px 0 #FFFFFF;
+}

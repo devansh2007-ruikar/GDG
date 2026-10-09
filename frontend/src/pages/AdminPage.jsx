@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Plus, RotateCcw, Calendar, Users, Ticket, Flame, BarChart3, Edit, Trash2 } from 'lucide-react';
 import api from '../services/api';
 import { AttendeesModal } from '../components/AttendeesModal';
 import { EventFormModal } from '../components/EventFormModal';
@@ -80,109 +81,222 @@ export const AdminPage = () => {
   };
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="container" style={{ padding: '3rem 1.5rem 5rem' }}>
+      {/* Admin Header */}
+      <div 
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '2.5rem', 
+          flexWrap: 'wrap', 
+          gap: '1.25rem',
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.4rem' }}>
-            Event Administration & Analytics
+          <div 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '0.5rem', 
+              backgroundColor: 'var(--green)', 
+              color: '#000000', 
+              border: '2px solid var(--border)', 
+              boxShadow: 'var(--shadow-sm)', 
+              padding: '0.35rem 0.95rem', 
+              borderRadius: 'var(--radius-pill)', 
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 800, 
+              fontSize: '0.785rem', 
+              letterSpacing: '0.08em', 
+              marginBottom: '1rem',
+            }}
+          >
+            🛡️ GDG RBU • COMMAND CENTER
+          </div>
+          <h1 style={{ fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.4rem' }}>
+            EVENT ADMINISTRATION
           </h1>
-          <p style={{ color: 'var(--text-muted)' }}>
-            Real-time platform insights, event capacities, and attendee management.
+          <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '1.05rem' }}>
+            Live platform metrics, capacity tracking, and attendee roster management.
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button onClick={refreshData} className="btn btn-secondary" title="Refresh data">
-            🔄 Refresh
+          <button type="button" onClick={refreshData} className="btn btn-outline" title="Refresh data">
+            <RotateCcw size={16} /> REFRESH
           </button>
-          <button onClick={() => setShowCreateModal(true)} className="btn btn-primary">
-            + Create New Event
+          <button type="button" onClick={() => setShowCreateModal(true)} className="btn btn-green">
+            <Plus size={16} /> CREATE NEW EVENT
           </button>
         </div>
       </div>
 
       {/* Analytics Stat Cards */}
-      <div className="grid grid-cols-3" style={{ marginBottom: '2rem' }}>
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem' }}>
-          <div style={{ fontSize: '2rem', padding: '0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: 'var(--radius-md)' }}>
-            📅
+      <div className="grid grid-cols-3" style={{ marginBottom: '2.5rem' }}>
+        <div 
+          className="card" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '1.25rem', 
+            padding: '1.5rem',
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+            borderRadius: 0,
+          }}
+        >
+          <div 
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 52,
+              height: 52,
+              backgroundColor: 'var(--blue)', 
+              border: '2px solid var(--border)',
+              borderRadius: 'var(--radius-btn)',
+              boxShadow: '2px 2px 0 var(--border)',
+              color: '#000',
+            }}
+          >
+            <Calendar size={24} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Total Events
+            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              TOTAL EVENTS
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1 }}>
+            <div style={{ fontSize: '2.4rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
               {analyticsLoading ? '...' : analytics?.totalEvents ?? 0}
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-              Created across categories
+            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              Published on platform
             </div>
           </div>
         </div>
 
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem' }}>
-          <div style={{ fontSize: '2rem', padding: '0.8rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: 'var(--radius-md)' }}>
-            👥
+        <div 
+          className="card" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '1.25rem', 
+            padding: '1.5rem',
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+            borderRadius: 0,
+          }}
+        >
+          <div 
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 52,
+              height: 52,
+              backgroundColor: 'var(--yellow)', 
+              border: '2px solid var(--border)',
+              borderRadius: 'var(--radius-btn)',
+              boxShadow: '2px 2px 0 var(--border)',
+              color: '#000',
+            }}
+          >
+            <Users size={24} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Total Attendees
+            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              TOTAL ATTENDEES
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1 }}>
+            <div style={{ fontSize: '2.4rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
               {analyticsLoading ? '...' : analytics?.totalUsers ?? 0}
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-              Registered user members
+            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              Registered member accounts
             </div>
           </div>
         </div>
 
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem' }}>
-          <div style={{ fontSize: '2rem', padding: '0.8rem', background: 'rgba(139, 92, 246, 0.1)', borderRadius: 'var(--radius-md)' }}>
-            🎟️
+        <div 
+          className="card" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '1.25rem', 
+            padding: '1.5rem',
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+            borderRadius: 0,
+          }}
+        >
+          <div 
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 52,
+              height: 52,
+              backgroundColor: 'var(--green)', 
+              border: '2px solid var(--border)',
+              borderRadius: 'var(--radius-btn)',
+              boxShadow: '2px 2px 0 var(--border)',
+              color: '#000',
+            }}
+          >
+            <Ticket size={24} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Total Registrations
+            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              TOTAL BOOKINGS
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1 }}>
+            <div style={{ fontSize: '2.4rem', fontFamily: 'var(--font-heading)', fontWeight: 700, lineHeight: 1.1 }}>
               {analyticsLoading ? '...' : analytics?.totalRegistrations ?? 0}
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-              Confirmed event bookings
+            <div style={{ fontSize: '0.785rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              Seats confirmed to date
             </div>
           </div>
         </div>
       </div>
 
-      {/* Fill Rate & Category Breakdown */}
+      {/* Analytics Breakdown Grid */}
       {analytics && (
-        <div className="grid grid-cols-2" style={{ marginBottom: '2.5rem' }}>
+        <div className="grid grid-cols-2" style={{ marginBottom: '3rem' }}>
           {/* Top 5 Events by Fill Rate */}
-          <div className="card" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🔥 Top Events by Fill Rate
-            </h3>
+          <div 
+            className="card" 
+            style={{ 
+              padding: '1.75rem',
+              border: '2px solid var(--border)',
+              boxShadow: 'var(--shadow-lg)',
+              borderRadius: 0,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              <Flame size={20} color="var(--red)" />
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700 }}>TOP EVENTS BY FILL RATE</h2>
+            </div>
+
             {analytics.topEvents.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No events recorded yet.</p>
+              <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem' }}>
+                No events recorded yet.
+              </p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 {analytics.topEvents.map((e) => (
                   <div key={e.id}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.35rem' }}>
-                      <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{e.title}</span>
-                      <span style={{ color: 'var(--text-muted)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
+                      <span style={{ fontWeight: 700 }}>{e.title}</span>
+                      <span style={{ color: 'var(--muted)' }}>
                         {e.registeredCount} / {e.capacity} ({e.fillPercentage}%)
                       </span>
                     </div>
-                    <div style={{ height: 8, background: 'rgba(255, 255, 255, 0.08)', borderRadius: 4, overflow: 'hidden' }}>
+
+                    <div className="progress-bar-container" style={{ height: 12 }}>
                       <div
+                        className="progress-bar-fill"
                         style={{
-                          height: '100%',
                           width: `${Math.min(100, e.fillPercentage)}%`,
-                          background: e.fillPercentage >= 100 ? '#EF4444' : 'var(--primary)',
-                          borderRadius: 4,
-                          transition: 'width 0.5s ease',
+                          backgroundColor: e.fillPercentage >= 100 ? 'var(--red)' : e.fillPercentage >= 70 ? 'var(--yellow)' : 'var(--blue)',
                         }}
                       />
                     </div>
@@ -193,14 +307,26 @@ export const AdminPage = () => {
           </div>
 
           {/* Registrations per Category */}
-          <div className="card" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              📊 Registrations per Category
-            </h3>
+          <div 
+            className="card" 
+            style={{ 
+              padding: '1.75rem',
+              border: '2px solid var(--border)',
+              boxShadow: 'var(--shadow-lg)',
+              borderRadius: 0,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              <BarChart3 size={20} color="var(--blue)" />
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 700 }}>REGISTRATIONS BY DOMAIN</h2>
+            </div>
+
             {analytics.registrationsByCategory.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No registrations recorded yet.</p>
+              <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem' }}>
+                No registrations logged yet.
+              </p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {analytics.registrationsByCategory.map((c) => (
                   <div
                     key={c.category}
@@ -208,15 +334,16 @@ export const AdminPage = () => {
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      padding: '0.75rem 1rem',
-                      background: 'rgba(255, 255, 255, 0.03)',
-                      borderRadius: 'var(--radius-md)',
-                      border: '1px solid var(--border-color)',
+                      padding: '0.85rem 1rem',
+                      backgroundColor: 'var(--bg)',
+                      border: '2px solid var(--border)',
+                      borderRadius: 'var(--radius-btn)',
+                      boxShadow: '2px 2px 0 var(--border)',
                     }}
                   >
                     <span className="badge badge-tech">{c.category}</span>
-                    <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)' }}>
-                      {c.count} {c.count === 1 ? 'attendee' : 'attendees'}
+                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.95rem' }}>
+                      {c.count} {c.count === 1 ? 'ATTENDEE' : 'ATTENDEES'}
                     </span>
                   </div>
                 ))}
@@ -226,24 +353,38 @@ export const AdminPage = () => {
         </div>
       )}
 
-      {/* Events Management Table Header */}
-      <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ fontSize: '1.35rem', fontWeight: 700 }}>Events Directory</h2>
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          Showing {events.length} {events.length === 1 ? 'event' : 'events'}
+      {/* Directory Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>EVENTS DIRECTORY</h2>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--muted)' }}>
+          {events.length} TOTAL MANAGED
         </span>
       </div>
 
+      {/* Directory Table with Yellow Header */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
-          <span className="spinner" style={{ width: 36, height: 36, borderWidth: 3 }}></span>
-          <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Loading event records...</p>
+          <span className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
+          <p style={{ marginTop: '1rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+            Loading event records...
+          </p>
         </div>
       ) : events.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem' }}>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '1.25rem' }}>No events exist in the system yet.</p>
-          <button onClick={() => setShowCreateModal(true)} className="btn btn-primary">
-            Create First Event
+        <div 
+          className="card" 
+          style={{ 
+            textAlign: 'center', 
+            padding: '3.5rem 1.5rem',
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+            borderRadius: 0,
+          }}
+        >
+          <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginBottom: '1.25rem' }}>
+            No events exist in the database.
+          </p>
+          <button type="button" onClick={() => setShowCreateModal(true)} className="btn btn-green">
+            CREATE FIRST EVENT
           </button>
         </div>
       ) : (
@@ -251,12 +392,12 @@ export const AdminPage = () => {
           <table className="table">
             <thead>
               <tr>
-                <th>Event Title</th>
-                <th>Category</th>
-                <th>Date & Time</th>
-                <th>Venue</th>
-                <th>Capacity (Filled / Max)</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>EVENT TITLE</th>
+                <th>CATEGORY</th>
+                <th>DATE & TIME</th>
+                <th>VENUE</th>
+                <th>SEATS (FILLED / MAX)</th>
+                <th style={{ textAlign: 'right' }}>ACTIONS</th>
               </tr>
             </thead>
             <tbody>
@@ -265,44 +406,53 @@ export const AdminPage = () => {
                 return (
                   <tr key={event.id}>
                     <td>
-                      <div style={{ fontWeight: 700 }}>{event.title}</div>
-                      <div style={{ fontSize: '0.785rem', color: 'var(--text-dim)' }}>ID: {event.id.slice(0, 8)}...</div>
+                      <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{event.title}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+                        ID: {event.id.slice(0, 8)}...
+                      </div>
                     </td>
                     <td>
                       <span className="badge badge-tech">{event.category}</span>
                     </td>
-                    <td style={{ fontSize: '0.85rem' }}>{formatDate(event.dateTime)}</td>
-                    <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{event.venue}</td>
+                    <td style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                      {formatDate(event.dateTime)}
+                    </td>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
+                      {event.venue}
+                    </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontWeight: 600, color: isFull ? '#EF4444' : 'var(--text-main)' }}>
+                        <span style={{ fontWeight: 800, color: isFull ? 'var(--red)' : 'var(--text)' }}>
                           {event.registeredCount} / {event.capacity}
                         </span>
                         {isFull && <span className="badge badge-full" style={{ fontSize: '0.65rem' }}>FULL</span>}
                       </div>
                     </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: '0.4rem' }}>
+                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <div style={{ display: 'inline-flex', gap: '0.45rem' }}>
                         <button
+                          type="button"
                           onClick={() => setSelectedEventForAttendees(event)}
-                          className="btn btn-secondary btn-sm"
-                          title="View Attendees"
+                          className="btn btn-outline btn-sm"
+                          title="View attendee roster"
                         >
-                          👥 Attendees ({event.registeredCount})
+                          <Users size={14} /> ({event.registeredCount})
                         </button>
                         <button
+                          type="button"
                           onClick={() => setEditingEvent(event)}
-                          className="btn btn-secondary btn-sm"
-                          title="Edit Event"
+                          className="btn btn-yellow btn-sm"
+                          title="Edit event"
                         >
-                          ✏️ Edit
+                          <Edit size={14} />
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleDelete(event.id, event.title)}
-                          className="btn btn-danger btn-sm"
-                          title="Delete Event"
+                          className="btn btn-red btn-sm"
+                          title="Delete event"
                         >
-                          🗑️
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>

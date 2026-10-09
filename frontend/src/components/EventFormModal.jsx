@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { X, Sparkles, AlertCircle } from 'lucide-react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 
@@ -94,46 +95,56 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>
-            {isEditing ? 'Edit Event' : 'Create New Event'}
-          </h2>
-          <button onClick={onClose} className="btn btn-secondary btn-sm" style={{ padding: '0.2rem 0.5rem' }}>
-            ✕
+      <div 
+        className="modal-content" 
+        onClick={(e) => e.stopPropagation()} 
+        style={{ 
+          maxWidth: 620,
+          border: '3px solid var(--border)',
+          boxShadow: 'var(--shadow-lg)',
+          borderRadius: 0,
+        }}
+      >
+        <div className="modal-header" style={{ borderBottom: '2px solid var(--border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Sparkles size={20} color="var(--blue)" />
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+              {isEditing ? 'EDIT EVENT' : 'CREATE EVENT'}
+            </h2>
+          </div>
+          <button 
+            type="button"
+            onClick={onClose} 
+            className="btn btn-outline btn-sm" 
+            style={{ padding: '0.25rem 0.5rem' }}
+          >
+            <X size={16} />
           </button>
         </div>
 
         {formError && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            color: '#F87171',
-            padding: '0.75rem 1rem',
-            borderRadius: 'var(--radius-md)',
-            fontSize: '0.85rem',
-            marginBottom: '1.25rem',
-          }}>
-            ⚠️ {formError}
+          <div className="alert-box alert-error" style={{ marginBottom: '1.25rem' }}>
+            <AlertCircle size={18} />
+            <span>{formError}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Event Title (3-100 characters)</label>
+            <label className="form-label">EVENT TITLE (3-100 CHARS)</label>
             <input
               type="text"
               className="input"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g. Next.js 15 & AI Agents Workshop"
+              placeholder="e.g. Next.js 15 & AI Agents Deep Dive"
               required
             />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="form-group">
-              <label className="form-label">Category</label>
+              <label className="form-label">DOMAIN / CATEGORY</label>
               <select
                 className="select"
                 value={formData.category}
@@ -148,7 +159,7 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Capacity (Seats: 1-10,000)</label>
+              <label className="form-label">SEAT CAPACITY (1-10,000)</label>
               <input
                 type="number"
                 min="1"
@@ -159,7 +170,7 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
                 required
               />
               {isEditing && (
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
+                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginTop: '0.25rem' }}>
                   Current attendees: {event.registeredCount}
                 </div>
               )}
@@ -168,7 +179,7 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="form-group">
-              <label className="form-label">Date & Time (Must be in future)</label>
+              <label className="form-label">DATE & TIME (FUTURE)</label>
               <input
                 type="datetime-local"
                 className="input"
@@ -179,36 +190,36 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Venue / Location</label>
+              <label className="form-label">VENUE / LOCATION</label>
               <input
                 type="text"
                 className="input"
                 value={formData.venue}
                 onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                placeholder="e.g. Hall 4, Tech Innovation Center"
+                placeholder="e.g. Auditorium Hall A"
                 required
               />
             </div>
           </div>
 
           <div className="form-group">
-            <label className="form-label">Description (10-2000 characters)</label>
+            <label className="form-label">DESCRIPTION (10-2000 CHARS)</label>
             <textarea
-              className="textarea"
+              className="input"
               rows={4}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe the agenda, prerequisites, target audience, and highlights..."
+              placeholder="Describe agenda, topics, speaker bios, and takeaways..."
               required
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
-            <button type="button" onClick={onClose} className="btn btn-secondary" disabled={submitting}>
-              Cancel
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.75rem' }}>
+            <button type="button" onClick={onClose} className="btn btn-outline" disabled={submitting}>
+              CANCEL
             </button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? <span className="spinner"></span> : isEditing ? 'Save Changes' : 'Create Event'}
+            <button type="submit" className="btn btn-green" disabled={submitting}>
+              {submitting ? <span className="spinner"></span> : isEditing ? 'SAVE CHANGES' : 'PUBLISH EVENT'}
             </button>
           </div>
         </form>

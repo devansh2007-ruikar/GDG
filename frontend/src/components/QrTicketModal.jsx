@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Printer, X, CheckCircle } from 'lucide-react';
 import api from '../services/api';
 
 export const QrTicketModal = ({ registration, onClose }) => {
@@ -44,89 +45,103 @@ export const QrTicketModal = ({ registration, onClose }) => {
       <div 
         className="modal-content print-ticket-area" 
         onClick={(e) => e.stopPropagation()} 
-        style={{ maxWidth: 460, textAlign: 'center' }}
+        style={{ 
+          maxWidth: 480, 
+          textAlign: 'center',
+          border: '3px solid var(--border)',
+          boxShadow: 'var(--shadow-lg)',
+          borderRadius: 0,
+          padding: '2rem',
+        }}
       >
-        <div className="modal-header" style={{ marginBottom: '1.25rem' }}>
-          <div>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '-0.01em' }}>
-              Digital Event Ticket
+        {/* Header */}
+        <div className="modal-header" style={{ marginBottom: '1.5rem', borderBottom: '2px solid var(--border)' }}>
+          <div style={{ textAlign: 'left' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+              DIGITAL ADMISSION PASS
             </h2>
-            <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>
-              Official admission pass
+            <p style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+              OFFICIAL GDG EVENT TICKET
             </p>
           </div>
           <button 
+            type="button"
             onClick={onClose} 
-            className="btn btn-secondary btn-sm" 
-            style={{ padding: '0.2rem 0.55rem', fontSize: '0.9rem' }}
+            className="btn btn-outline btn-sm" 
+            style={{ padding: '0.25rem 0.5rem' }}
           >
-            ✕
+            <X size={16} />
           </button>
         </div>
 
         {loading ? (
-          <div style={{ padding: '3rem 1.5rem' }}>
-            <span className="spinner" style={{ width: 36, height: 36, borderWidth: 3 }}></span>
-            <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+          <div style={{ padding: '3.5rem 1.5rem' }}>
+            <span className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
+            <p style={{ marginTop: '1.25rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.9rem' }}>
               Generating secure QR pass...
             </p>
           </div>
         ) : errorMsg ? (
-          <div style={{ color: '#F87171', padding: '1.5rem', background: 'rgba(239,68,68,0.1)', borderRadius: 12 }}>
-            <p style={{ fontWeight: 600 }}>{errorMsg}</p>
-            <button onClick={onClose} className="btn btn-secondary btn-sm" style={{ marginTop: '1rem' }}>
-              Close
-            </button>
+          <div className="alert-box alert-error" style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
+            <div>
+              <p style={{ fontWeight: 700 }}>{errorMsg}</p>
+              <button type="button" onClick={onClose} className="btn btn-outline btn-sm" style={{ marginTop: '0.75rem' }}>
+                CLOSE
+              </button>
+            </div>
           </div>
         ) : ticketData && (
           <div>
             <div 
               style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid var(--border-color)',
-                borderRadius: 'var(--radius-lg)',
+                backgroundColor: 'var(--bg)',
+                border: '2px solid var(--border)',
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: 0,
                 padding: '1.5rem',
-                position: 'relative',
-                overflow: 'hidden',
+                marginBottom: '1.5rem',
               }}
             >
-              {/* Event Badge & Title */}
+              {/* Category & Title */}
               <div style={{ marginBottom: '1rem' }}>
-                <span className="badge badge-tech" style={{ marginBottom: '0.5rem', display: 'inline-block' }}>
+                <span className="badge badge-tech" style={{ marginBottom: '0.65rem' }}>
                   {ticketData.event.category}
                 </span>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.3 }}>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 700, lineHeight: 1.25, color: 'var(--text)' }}>
                   {ticketData.event.title}
                 </h3>
               </div>
 
-              {/* Event Details */}
+              {/* Event Time & Venue in Mono */}
               <div 
                 style={{ 
-                  fontSize: '0.85rem', 
-                  color: 'var(--text-muted)', 
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.825rem', 
+                  color: 'var(--text)', 
                   display: 'flex', 
                   flexDirection: 'column', 
                   gap: '0.35rem',
                   marginBottom: '1.25rem',
                   padding: '0.75rem',
-                  background: 'rgba(0, 0, 0, 0.25)',
-                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 4,
                 }}
               >
                 <div>📅 <strong>{formatDate(ticketData.event.dateTime)}</strong></div>
                 <div>📍 <strong>{ticketData.event.venue}</strong></div>
               </div>
 
-              {/* QR Code */}
+              {/* QR Code Container with High-Contrast Sharp Border */}
               <div 
                 style={{
                   display: 'inline-block',
                   padding: '12px',
-                  background: '#FFFFFF',
-                  borderRadius: 16,
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
-                  marginBottom: '1rem',
+                  backgroundColor: '#FFFFFF',
+                  border: '3px solid #000000',
+                  boxShadow: '4px 4px 0 #000000',
+                  borderRadius: 0,
+                  marginBottom: '1.25rem',
                 }}
               >
                 <img 
@@ -136,60 +151,70 @@ export const QrTicketModal = ({ registration, onClose }) => {
                 />
               </div>
 
-              {/* Attendee & Verification Info */}
-              <div style={{ borderTop: '1px dashed var(--border-color)', paddingTop: '1rem', textAlign: 'left' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Attendee:</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>
-                    {ticketData.attendee.name}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Email:</span>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {ticketData.attendee.email}
-                  </span>
+              {/* Attendee Info Table */}
+              <div 
+                style={{ 
+                  borderTop: '2px dashed var(--border)', 
+                  paddingTop: '1rem', 
+                  textAlign: 'left',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.825rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.4rem',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--muted)' }}>ATTENDEE:</span>
+                  <span style={{ fontWeight: 700 }}>{ticketData.attendee.name}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Ticket ID:</span>
-                  <span style={{ fontSize: '0.78rem', fontFamily: 'monospace', color: 'var(--primary)' }}>
-                    {ticketData.registrationId.slice(0, 18)}...
+                  <span style={{ color: 'var(--muted)' }}>EMAIL:</span>
+                  <span style={{ fontWeight: 600 }}>{ticketData.attendee.email}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--muted)' }}>PASS ID:</span>
+                  <span style={{ fontWeight: 700, color: 'var(--blue)' }}>
+                    {ticketData.registrationId.slice(0, 16)}...
                   </span>
                 </div>
               </div>
 
+              {/* Checkmark */}
               <div 
                 style={{ 
                   marginTop: '1rem', 
-                  fontSize: '0.75rem', 
-                  color: 'var(--accent-green)', 
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.785rem', 
+                  fontWeight: 700,
+                  color: 'var(--green)', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center', 
-                  gap: '0.35rem' 
+                  gap: '0.35rem',
                 }}
               >
-                <span>✓</span> Verified Ticket Pass • Present for Entry
+                <CheckCircle size={14} /> VERIFIED PASS • SCAN AT ENTRANCE
               </div>
             </div>
 
-            {/* Modal Actions */}
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '0.85rem' }}>
               <button 
                 type="button" 
                 onClick={handlePrint} 
-                className="btn btn-secondary" 
-                style={{ flex: 1 }}
+                className="btn btn-outline" 
+                style={{ flex: 1, justifyContent: 'center' }}
               >
-                🖨️ Print Ticket
+                <Printer size={16} /> PRINT PASS
               </button>
               <button 
                 type="button" 
                 onClick={onClose} 
-                className="btn btn-primary" 
-                style={{ flex: 1 }}
+                className="btn btn-yellow" 
+                style={{ flex: 1, justifyContent: 'center' }}
               >
-                Done
+                DONE
               </button>
             </div>
           </div>

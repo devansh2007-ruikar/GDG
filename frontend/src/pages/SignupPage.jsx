@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserPlus, Sparkles, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -47,34 +48,55 @@ export const SignupPage = () => {
   };
 
   return (
-    <div className="container" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.5rem' }}>
-      <div className="card" style={{ width: '100%', maxWidth: 440, padding: '2.5rem' }}>
+    <div className="container" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
+      <div 
+        className="card" 
+        style={{ 
+          width: '100%', 
+          maxWidth: 480, 
+          padding: '2.5rem',
+          border: '3px solid var(--border)',
+          boxShadow: 'var(--shadow-lg)',
+          borderRadius: 0,
+        }}
+      >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '0.4rem' }}>Create an Account</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Join the developer community and register for events</p>
+          <div 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '0.4rem', 
+              backgroundColor: 'var(--green)', 
+              color: '#000', 
+              border: '2px solid var(--border)', 
+              padding: '0.25rem 0.75rem', 
+              borderRadius: 'var(--radius-pill)',
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 800,
+              fontSize: '0.75rem',
+              marginBottom: '1rem',
+            }}
+          >
+            <Sparkles size={12} /> NEW MEMBERSHIP
+          </div>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.35rem' }}>
+            JOIN GDG RBU
+          </h1>
+          <p style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.925rem' }}>
+            Connect with our developer community and claim seats.
+          </p>
         </div>
 
         {formError && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            color: '#F87171',
-            padding: '0.75rem 1rem',
-            borderRadius: 'var(--radius-md)',
-            fontSize: '0.875rem',
-            marginBottom: '1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
-            <span>⚠️</span>
+          <div className="alert-box alert-error" style={{ marginBottom: '1.5rem' }}>
+            <AlertCircle size={18} />
             <span>{formError}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Full Name</label>
+            <label className="form-label">FULL NAME</label>
             <input
               type="text"
               className="input"
@@ -86,7 +108,7 @@ export const SignupPage = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Email Address</label>
+            <label className="form-label">EMAIL ADDRESS</label>
             <input
               type="email"
               className="input"
@@ -98,34 +120,31 @@ export const SignupPage = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label">PASSWORD (MIN 8 CHARS, 1 LETTER + 1 NUMBER)</label>
             <input
               type="password"
               className="input"
-              placeholder="Min 8 chars, 1 letter, 1 number"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>
-              Must have at least 8 characters, 1 letter, and 1 number.
-            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary"
-            style={{ width: '100%', marginTop: '0.5rem', height: 44 }}
+            className="btn btn-green"
+            style={{ width: '100%', marginTop: '0.5rem', height: 48, justifyContent: 'center' }}
           >
-            {loading ? <span className="spinner"></span> : 'Create Account'}
+            {loading ? <span className="spinner"></span> : <><UserPlus size={16} /> CREATE ACCOUNT</>}
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-          Already have an account?{' '}
-          <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>
-            Log in
+        <div style={{ textAlign: 'center', marginTop: '1.75rem', fontFamily: 'var(--font-mono)', fontSize: '0.875rem' }}>
+          <span style={{ color: 'var(--muted)' }}>Already an active member? </span>
+          <Link to="/login" style={{ color: 'var(--blue)', fontWeight: 800, textDecoration: 'underline' }}>
+            Sign In here
           </Link>
         </div>
       </div>

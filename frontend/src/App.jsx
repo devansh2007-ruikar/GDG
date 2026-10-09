@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/Navbar';
@@ -16,11 +17,12 @@ import { AdminPage } from './pages/AdminPage';
 export function App() {
   return (
     <BrowserRouter>
-      <ToastProvider>
-        <AuthProvider>
-          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Navbar />
-            <main style={{ flex: 1 }}>
+      <ThemeProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <Navbar />
+              <main style={{ flex: 1 }}>
               <Routes>
                 <Route path="/" element={<Navigate to="/events" replace />} />
                 <Route path="/events" element={<EventsPage />} />
@@ -54,8 +56,9 @@ export function App() {
           </div>
         </AuthProvider>
       </ToastProvider>
-    </BrowserRouter>
-  );
+    </ThemeProvider>
+  </BrowserRouter>
+);
 }
 
 export default App;

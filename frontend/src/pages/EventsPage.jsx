@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Search, Calendar as CalendarIcon, RotateCcw, Sparkles } from 'lucide-react';
 import api from '../services/api';
 import { EventCard } from '../components/EventCard';
 import { SkeletonCard } from '../components/SkeletonCard';
@@ -83,53 +84,150 @@ export const EventsPage = () => {
     setPage(1);
   };
 
+  const domainTabs = ['', ...categories];
+
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem' }}>
-      {/* Header Banner */}
-      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.4rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '0.6rem' }}>
-          Explore GDG Community Events
+    <div className="container" style={{ padding: '3rem 1.5rem 5rem' }}>
+      {/* Neo-Brutalist Hero Header */}
+      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <div 
+          style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '0.5rem', 
+            backgroundColor: 'var(--yellow)', 
+            color: '#000000', 
+            border: '2px solid var(--border)', 
+            boxShadow: 'var(--shadow-sm)', 
+            padding: '0.35rem 0.95rem', 
+            borderRadius: 'var(--radius-pill)', 
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 800, 
+            fontSize: '0.785rem', 
+            letterSpacing: '0.08em', 
+            marginBottom: '1.25rem',
+          }}
+        >
+          <Sparkles size={14} /> GDG RBU • EVENTS
+        </div>
+
+        <h1 
+          style={{ 
+            fontSize: '3.2rem', 
+            fontWeight: 700, 
+            letterSpacing: '-0.02em', 
+            marginBottom: '0.75rem',
+            lineHeight: 1.1,
+          }}
+        >
+          DISCOVER EVENTS
         </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', maxWidth: 600, margin: '0 auto' }}>
-          Connect with industry experts, attend hands-on workshops, and build the future with Google technologies.
+
+        <p 
+          style={{ 
+            fontFamily: 'var(--font-mono)', 
+            color: 'var(--muted)', 
+            fontSize: '1.05rem', 
+            maxWidth: 680, 
+            margin: '0 auto',
+            lineHeight: 1.6,
+          }}
+        >
+          Explore upcoming workshops, hackathons, and tech talks. Reserve your seat with atomic concurrency safety.
         </p>
       </div>
 
-      {/* Search & Filter Toolbar */}
-      <div className="card" style={{ marginBottom: '2rem', padding: '1.25rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', alignItems: 'flex-end' }}>
+      {/* Filter Bar with Neo-Brutalist Domain Tabs */}
+      <div 
+        className="card" 
+        style={{ 
+          marginBottom: '2.5rem', 
+          padding: '1.5rem',
+          border: '2px solid var(--border)',
+          boxShadow: 'var(--shadow-lg)',
+          borderRadius: 0,
+        }}
+      >
+        {/* Category Domain Tabs */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <div 
+            style={{ 
+              fontSize: '0.785rem', 
+              fontFamily: 'var(--font-mono)', 
+              fontWeight: 700, 
+              color: 'var(--muted)', 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.06em', 
+              marginBottom: '0.65rem' 
+            }}
+          >
+            SELECT DOMAIN / CATEGORY:
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {domainTabs.map((cat) => {
+              const isSelected = selectedCategory === cat;
+              return (
+                <button
+                  key={cat || 'all'}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setPage(1);
+                  }}
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    padding: '0.45rem 1rem',
+                    border: '2px solid var(--border)',
+                    borderRadius: 'var(--radius-pill)',
+                    boxShadow: isSelected ? 'none' : '3px 3px 0 var(--border)',
+                    transform: isSelected ? 'translate(2px, 2px)' : 'none',
+                    backgroundColor: isSelected ? 'var(--blue)' : 'var(--surface)',
+                    color: isSelected ? '#000000' : 'var(--text)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {cat || 'ALL EVENTS'}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Search & Date Controls Grid */}
+        <div 
+          style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+            gap: '1rem', 
+            alignItems: 'flex-end',
+            borderTop: '2px solid var(--border)',
+            paddingTop: '1.25rem',
+          }}
+        >
+          {/* Keyword Search */}
           <div>
-            <label className="form-label">Search Keywords</label>
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <Search size={14} /> SEARCH KEYWORDS
+            </label>
             <input
               type="text"
               className="input"
-              placeholder="Search title, venue, or topics..."
+              placeholder="Search by title, venue, or topics..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
+          {/* From Date */}
           <div>
-            <label className="form-label">Category</label>
-            <select
-              className="select"
-              value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">All Categories</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="form-label">From Date</label>
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <CalendarIcon size={14} /> FROM DATE
+            </label>
             <input
               type="date"
               className="input"
@@ -141,8 +239,11 @@ export const EventsPage = () => {
             />
           </div>
 
+          {/* To Date */}
           <div>
-            <label className="form-label">To Date</label>
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <CalendarIcon size={14} /> TO DATE
+            </label>
             <input
               type="date"
               className="input"
@@ -154,8 +255,20 @@ export const EventsPage = () => {
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', height: '42px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer' }}>
+          {/* Upcoming Toggle & Reset Button */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', minHeight: '44px' }}>
+            <label 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem', 
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.85rem', 
+                fontWeight: 700,
+                color: 'var(--text)', 
+                cursor: 'pointer' 
+              }}
+            >
               <input
                 type="checkbox"
                 checked={upcomingOnly}
@@ -163,21 +276,31 @@ export const EventsPage = () => {
                   setUpcomingOnly(e.target.checked);
                   setPage(1);
                 }}
-                style={{ cursor: 'pointer', accentColor: 'var(--primary)' }}
+                style={{ 
+                  width: 18, 
+                  height: 18, 
+                  cursor: 'pointer', 
+                  accentColor: 'var(--blue)',
+                }}
               />
-              Future only
+              UPCOMING ONLY
             </label>
 
             {(search || selectedCategory || fromDate || toDate || !upcomingOnly) && (
-              <button onClick={handleResetFilters} className="btn btn-secondary btn-sm" style={{ marginLeft: 'auto' }}>
-                Reset
+              <button 
+                type="button" 
+                onClick={handleResetFilters} 
+                className="btn btn-outline btn-sm"
+                title="Reset all filters"
+              >
+                <RotateCcw size={14} /> Reset
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* Results Grid */}
+      {/* Results Section */}
       {loading ? (
         <div className="grid grid-cols-3">
           {Array.from({ length: 6 }).map((_, idx) => (
@@ -185,14 +308,33 @@ export const EventsPage = () => {
           ))}
         </div>
       ) : events.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem', margin: '2rem 0' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-          <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '0.5rem' }}>No events found</h3>
-          <p style={{ color: 'var(--text-muted)', maxWidth: 450, margin: '0 auto 1.5rem auto', fontSize: '0.925rem' }}>
-            We couldn't find any events matching your selected criteria. Try resetting filters or searching for different keywords.
+        <div 
+          className="card" 
+          style={{ 
+            textAlign: 'center', 
+            padding: '4rem 1.5rem', 
+            margin: '2rem 0',
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+            borderRadius: 0,
+          }}
+        >
+          <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>👾</div>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+            NO EVENTS FOUND
+          </h2>
+          <p 
+            style={{ 
+              fontFamily: 'var(--font-mono)', 
+              color: 'var(--muted)', 
+              maxWidth: 480, 
+              margin: '0 auto 1.5rem',
+            }}
+          >
+            No events match your current filter criteria. Try selecting another domain or clearing keywords.
           </p>
-          <button onClick={handleResetFilters} className="btn btn-primary">
-            Clear Filters
+          <button type="button" onClick={handleResetFilters} className="btn btn-yellow">
+            CLEAR ALL FILTERS
           </button>
         </div>
       ) : (
@@ -203,26 +345,47 @@ export const EventsPage = () => {
             ))}
           </div>
 
-          {/* Pagination Controls */}
+          {/* Brutalist Pagination Bar */}
           {meta.totalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '2.5rem' }}>
+            <div 
+              style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                gap: '1rem', 
+                marginTop: '3.5rem',
+                flexWrap: 'wrap',
+              }}
+            >
               <button
-                className="btn btn-secondary btn-sm"
+                className="btn btn-outline"
                 disabled={page <= 1}
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
               >
-                ← Previous
+                ← PREVIOUS
               </button>
-              <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                Page <strong style={{ color: 'var(--text-main)' }}>{meta.page}</strong> of{' '}
-                <strong style={{ color: 'var(--text-main)' }}>{meta.totalPages}</strong> ({meta.total} total)
-              </span>
+
+              <div 
+                style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontWeight: 700, 
+                  fontSize: '0.9rem',
+                  padding: '0.45rem 1rem',
+                  border: '2px solid var(--border)',
+                  backgroundColor: 'var(--surface)',
+                  boxShadow: 'var(--shadow-sm)',
+                  borderRadius: 'var(--radius-btn)',
+                }}
+              >
+                PAGE <span style={{ color: 'var(--blue)' }}>{meta.page}</span> OF {meta.totalPages} ({meta.total} TOTAL)
+              </div>
+
               <button
-                className="btn btn-secondary btn-sm"
+                className="btn btn-outline"
                 disabled={page >= meta.totalPages}
                 onClick={() => setPage((prev) => Math.min(meta.totalPages, prev + 1))}
               >
-                Next →
+                NEXT →
               </button>
             </div>
           )}

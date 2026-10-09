@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Calendar, MapPin, Users, CheckCircle2, AlertCircle } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -34,9 +35,11 @@ export const EventDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="container" style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
-        <div className="spinner" style={{ width: 40, height: 40, borderWidth: 3 }}></div>
-        <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Loading event details...</p>
+      <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center' }}>
+        <div className="spinner" style={{ width: 44, height: 44, borderWidth: 4 }}></div>
+        <p style={{ marginTop: '1.25rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+          Loading event details...
+        </p>
       </div>
     );
   }
@@ -46,6 +49,7 @@ export const EventDetailPage = () => {
   const isFull = event.seatsLeft === 0;
   const isPast = new Date(event.dateTime).getTime() <= Date.now();
   const fillPercentage = Math.min(100, (event.registeredCount / event.capacity) * 100);
+  const seatsLeftPercentage = (event.seatsLeft / event.capacity) * 100;
 
   const formatDate = (dateString) => {
     const d = new Date(dateString);
@@ -57,6 +61,17 @@ export const EventDetailPage = () => {
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const getCategoryClass = (cat) => {
+    switch (cat?.toLowerCase()) {
+      case 'tech': return 'badge-tech';
+      case 'workshop': return 'badge-workshop';
+      case 'hackathon': return 'badge-hackathon';
+      case 'meetup': return 'badge-meetup';
+      case 'talk': return 'badge-talk';
+      default: return 'badge-default';
+    }
   };
 
   const handleRegister = async () => {
@@ -102,116 +117,242 @@ export const EventDetailPage = () => {
   };
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem', maxWidth: 840 }}>
-      <Link to="/events" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-        ← Back to all events
+    <div className="container" style={{ padding: '3rem 1.5rem 5rem', maxWidth: 920 }}>
+      {/* Back Link */}
+      <Link 
+        to="/events" 
+        style={{ 
+          display: 'inline-flex', 
+          alignItems: 'center', 
+          gap: '0.5rem', 
+          fontFamily: 'var(--font-mono)',
+          fontWeight: 700,
+          fontSize: '0.9rem', 
+          color: 'var(--text)', 
+          marginBottom: '1.75rem',
+        }}
+      >
+        <ArrowLeft size={16} /> BACK TO EVENTS
       </Link>
 
-      <div className="card" style={{ padding: '2.5rem' }}>
-        {/* Badges & Status */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <span className="badge badge-tech" style={{ fontSize: '0.85rem', padding: '0.35rem 0.85rem' }}>
-            {event.category}
-          </span>
-
-          {event.isRegistered ? (
-            <span className="badge badge-registered">✓ YOU ARE REGISTERED</span>
-          ) : isFull ? (
-            <span className="badge badge-full">EVENT FULL</span>
-          ) : isPast ? (
-            <span className="badge badge-default">EVENT CONCLUDED</span>
-          ) : (
-            <span style={{ color: '#10B981', fontWeight: 600, fontSize: '0.9rem' }}>
-              ● {event.seatsLeft} {event.seatsLeft === 1 ? 'seat remaining' : 'seats remaining'}
+      {/* Big Bordered Task Panel */}
+      <div 
+        style={{ 
+          border: '3px solid var(--border)', 
+          boxShadow: 'var(--shadow-lg)', 
+          borderRadius: 0,
+          overflow: 'hidden',
+          backgroundColor: 'var(--surface)',
+        }}
+      >
+        {/* Header Area Tinted Light Blue (#EEF3FE / var(--header-tint)) */}
+        <div 
+          style={{ 
+            backgroundColor: 'var(--header-tint)', 
+            padding: '2.5rem 2rem', 
+            borderBottom: '3px solid var(--border)',
+          }}
+        >
+          {/* Badge & Registration Status Tag */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <span className={`badge ${getCategoryClass(event.category)}`} style={{ fontSize: '0.825rem', padding: '0.35rem 0.85rem' }}>
+              {event.category}
             </span>
-          )}
-        </div>
 
-        {/* Title */}
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, lineHeight: 1.25, marginBottom: '1.25rem' }}>
-          {event.title}
-        </h1>
+            {event.isRegistered ? (
+              <span className="badge badge-registered" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                <CheckCircle2 size={14} /> CONFIRMED ATTENDEE
+              </span>
+            ) : isFull ? (
+              <span className="badge badge-full" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                <AlertCircle size={14} /> EVENT FULL
+              </span>
+            ) : isPast ? (
+              <span className="badge badge-default">CONCLUDED</span>
+            ) : (
+              <span 
+                style={{ 
+                  fontFamily: 'var(--font-mono)', 
+                  fontWeight: 700, 
+                  fontSize: '0.85rem',
+                  color: seatsLeftPercentage <= 30 ? 'var(--red)' : 'var(--green)',
+                  backgroundColor: 'var(--surface)',
+                  padding: '0.3rem 0.65rem',
+                  border: '2px solid var(--border)',
+                  boxShadow: 'var(--shadow-sm)',
+                  borderRadius: 4,
+                }}
+              >
+                ● {event.seatsLeft} {event.seatsLeft === 1 ? 'SEAT REMAINING' : 'SEATS REMAINING'}
+              </span>
+            )}
+          </div>
 
-        {/* Info Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', background: 'rgba(255, 255, 255, 0.03)', padding: '1.25rem', borderRadius: 'var(--radius-md)', marginBottom: '1.75rem' }}>
-          <div>
-            <div style={{ fontSize: '0.785rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Date & Time</div>
-            <div style={{ fontWeight: 600, marginTop: '0.2rem' }}>{formatDate(event.dateTime)}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: '0.785rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Location / Venue</div>
-            <div style={{ fontWeight: 600, marginTop: '0.2rem' }}>{event.venue}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: '0.785rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Organized By</div>
-            <div style={{ fontWeight: 600, marginTop: '0.2rem' }}>{event.createdBy?.name || 'GDG Chapter'}</div>
-          </div>
-        </div>
+          {/* Big Pixel Heading */}
+          <h1 
+            style={{ 
+              fontSize: '2.8rem', 
+              fontWeight: 700, 
+              lineHeight: 1.15, 
+              marginBottom: '1.25rem',
+              color: 'var(--text)',
+            }}
+          >
+            {event.title}
+          </h1>
 
-        {/* Description */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.75rem' }}>About this Event</h3>
-          <p style={{ color: 'var(--text-muted)', lineHeight: 1.7, fontSize: '1rem', whiteSpace: 'pre-wrap' }}>
+          {/* Description in Mono */}
+          <p 
+            style={{ 
+              fontFamily: 'var(--font-mono)',
+              color: 'var(--muted)', 
+              lineHeight: 1.7, 
+              fontSize: '1.05rem', 
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {event.description}
           </p>
         </div>
 
-        {/* Capacity Breakdown */}
-        <div style={{ background: '#0F1626', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-            <span style={{ fontWeight: 600 }}>Seat Occupancy</span>
-            <span style={{ color: 'var(--text-muted)' }}>
-              <strong>{event.registeredCount}</strong> / {event.capacity} seats taken
-            </span>
-          </div>
-          <div className="capacity-bar" style={{ height: 8 }}>
-            <div
-              className="capacity-fill"
-              style={{
-                width: `${fillPercentage}%`,
-                backgroundColor: isFull ? '#EF4444' : fillPercentage > 80 ? '#F59E0B' : '#3B82F6',
+        {/* Details & Capacity Section */}
+        <div style={{ padding: '2.5rem 2rem' }}>
+          {/* Metadata Grid */}
+          <div 
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+              gap: '1.25rem', 
+              marginBottom: '2.25rem',
+            }}
+          >
+            <div 
+              style={{ 
+                padding: '1.25rem', 
+                border: '2px solid var(--border)', 
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: 'var(--radius-btn)',
+                backgroundColor: 'var(--bg)',
               }}
-            />
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '0.35rem' }}>
-            <span>0 seats</span>
-            <span>{event.capacity} total capacity</span>
-          </div>
-        </div>
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.785rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
+                <Calendar size={14} color="var(--blue)" /> DATE & TIME
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+                {formatDate(event.dateTime)}
+              </div>
+            </div>
 
-        {/* Action Button Section */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
-          {!user ? (
-            <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', textAlign: 'center' }}>
-              🔑 Login to Register
-            </Link>
-          ) : event.isRegistered ? (
-            <button
-              onClick={handleUnregister}
-              disabled={actionLoading || isPast}
-              className="btn btn-danger btn-lg"
-              style={{ minWidth: 200 }}
+            <div 
+              style={{ 
+                padding: '1.25rem', 
+                border: '2px solid var(--border)', 
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: 'var(--radius-btn)',
+                backgroundColor: 'var(--bg)',
+              }}
             >
-              {actionLoading ? <span className="spinner"></span> : '✕ Unregister from Event'}
-            </button>
-          ) : isPast ? (
-            <button disabled className="btn btn-secondary btn-lg" style={{ minWidth: 200 }}>
-              Event Already Concluded
-            </button>
-          ) : isFull ? (
-            <button disabled className="btn btn-secondary btn-lg" style={{ minWidth: 200 }}>
-              Event Full (0 Seats Left)
-            </button>
-          ) : (
-            <button
-              onClick={handleRegister}
-              disabled={actionLoading}
-              className="btn btn-primary btn-lg"
-              style={{ minWidth: 200 }}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.785rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
+                <MapPin size={14} color="var(--red)" /> LOCATION / VENUE
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+                {event.venue}
+              </div>
+            </div>
+
+            <div 
+              style={{ 
+                padding: '1.25rem', 
+                border: '2px solid var(--border)', 
+                boxShadow: 'var(--shadow-sm)',
+                borderRadius: 'var(--radius-btn)',
+                backgroundColor: 'var(--bg)',
+              }}
             >
-              {actionLoading ? <span className="spinner"></span> : '🎟️ Register Now'}
-            </button>
-          )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.785rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
+                <Users size={14} color="var(--green)" /> ORGANIZED BY
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+                {event.createdBy?.name || 'GDG RBU Chapter'}
+              </div>
+            </div>
+          </div>
+
+          {/* Capacity Progress Bar with Black Border */}
+          <div 
+            style={{ 
+              padding: '1.5rem', 
+              border: '2px solid var(--border)', 
+              boxShadow: 'var(--shadow-sm)',
+              borderRadius: 'var(--radius-btn)',
+              backgroundColor: 'var(--bg)',
+              marginBottom: '2.5rem',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase' }}>
+                SEAT OCCUPANCY
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.85rem' }}>
+                <strong>{event.registeredCount}</strong> / {event.capacity} SEATS BOOKED
+              </span>
+            </div>
+
+            <div className="progress-bar-container" style={{ height: 16 }}>
+              <div
+                className="progress-bar-fill"
+                style={{
+                  width: `${fillPercentage}%`,
+                  backgroundColor: isFull ? 'var(--red)' : seatsLeftPercentage <= 30 ? 'var(--yellow)' : 'var(--green)',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Action Button Section with Brutalist Styling */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '2px solid var(--border)', paddingTop: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+            {event.isRegistered ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--green)', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.95rem' }}>
+                <CheckCircle2 size={18} /> You hold a confirmed seat for this event.
+              </div>
+            ) : (
+              <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: '0.875rem' }}>
+                Seats are allocated atomically on first-come, first-served basis.
+              </div>
+            )}
+
+            {!user ? (
+              <Link to="/login" className="btn btn-primary btn-lg" style={{ minWidth: 220 }}>
+                🔑 LOGIN TO REGISTER
+              </Link>
+            ) : event.isRegistered ? (
+              <button
+                onClick={handleUnregister}
+                disabled={actionLoading || isPast}
+                className="btn btn-red btn-lg"
+                style={{ minWidth: 240 }}
+              >
+                {actionLoading ? <span className="spinner"></span> : '✕ CANCEL REGISTRATION'}
+              </button>
+            ) : isPast ? (
+              <button disabled className="btn btn-outline btn-lg" style={{ minWidth: 240 }}>
+                EVENT CONCLUDED
+              </button>
+            ) : isFull ? (
+              <button disabled className="btn btn-red btn-lg" style={{ minWidth: 240, opacity: 0.7 }}>
+                EVENT FULL (0 SEATS)
+              </button>
+            ) : (
+              <button
+                onClick={handleRegister}
+                disabled={actionLoading}
+                className="btn btn-green btn-lg"
+                style={{ minWidth: 240 }}
+              >
+                {actionLoading ? <span className="spinner"></span> : '🎟️ REGISTER NOW'}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
