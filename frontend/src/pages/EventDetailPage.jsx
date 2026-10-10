@@ -1,41 +1,51 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Calendar, MapPin, Users, CheckCircle2, AlertCircle } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { LoadingScreen } from '../components/LoadingScreen';
+import { EventDetailSkeleton } from '../components/EventDetailSkeleton';
+import { formatDateTimeIST } from '../utils/date';
 
 export const EventDetailPage = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, authLoading } = useAuth();
   const { success, error } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchEvent = async () => {
       try {
         const res = await api.get(`/events/${id}`);
-        if (res.data.success) {
+        if (res.data.success && isMounted) {
           setEvent(res.data.data);
         }
       } catch (err) {
-        error(err.response?.data?.error?.message || 'Event not found');
-        navigate('/events');
+        if (isMounted) {
+          error(err.response?.data?.error?.message || 'Event not found');
+          navigate('/events');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchEvent();
+    return () => {
+      isMounted = false;
+    };
   }, [id, error, navigate]);
 
-  if (loading) {
-    return <LoadingScreen message="Loading event details..." />;
+  if (loading && !event) {
+    return <EventDetailSkeleton />;
   }
 
   if (!event) return null;
@@ -44,18 +54,6 @@ export const EventDetailPage = () => {
   const isPast = new Date(event.dateTime).getTime() <= Date.now();
   const fillPercentage = Math.min(100, (event.registeredCount / event.capacity) * 100);
   const seatsLeftPercentage = (event.seatsLeft / event.capacity) * 100;
-
-  const formatDate = (dateString) => {
-    const d = new Date(dateString);
-    return d.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const getCategoryClass = (cat) => {
     switch (cat?.toLowerCase()) {
@@ -110,62 +108,92 @@ export const EventDetailPage = () => {
     }
   };
 
-  const renderActionButton = (isFullWidth = false) => {
-    const btnStyle = isFullWidth 
-      ? { width: '100%', minHeight: 48, fontSize: '1rem', justifyContent: 'center' } 
-      : { minWidth: 220, minHeight: 48 };
+  /**
+   * Action button renderer for both desktop inline and mobile sticky bottom bar
+   */
+  const renderActionButton = (isMobileBar = false) => {
+    const baseStyle = isMobileBar
+      ? { minHeight: 44, padding: '0.6rem 1.15rem', fontSize: '0.9rem', flexShrink: 0 }
+      : { minWidth: 220, minHeight: 48, fontSize: '0.95rem' };
+
+    if (authLoading) {
+      return (
+        <div
+          style={{
+            ...baseStyle,
+            backgroundColor: 'var(--surface)',
+            border: '2px solid var(--border)',
+            borderRadius: 'var(--radius-btn)',
+            opacity: 0.6,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span className="spinner" style={{ width: 18, height: 18 }} />
+        </div>
+      );
+    }
 
     if (!user) {
       return (
-        <Link to="/login" className="btn btn-primary btn-lg" style={btnStyle}>
-          🔑 LOGIN TO REGISTER
+        <Link
+          to="/login"
+          state={{ from: location }}
+          className="btn btn-primary"
+          style={baseStyle}
+        >
+          Login to Register
         </Link>
       );
     }
+
+    if (isPast) {
+      return (
+        <button disabled className="btn btn-outline" style={{ ...baseStyle, opacity: 0.6 }}>
+          Event Ended
+        </button>
+      );
+    }
+
     if (event.isRegistered) {
       return (
         <button
           onClick={handleUnregister}
-          disabled={actionLoading || isPast}
-          className="btn btn-red btn-lg"
-          style={btnStyle}
+          disabled={actionLoading}
+          className="btn btn-red"
+          style={baseStyle}
         >
-          {actionLoading ? <span className="spinner"></span> : '✕ CANCEL REGISTRATION'}
+          {actionLoading ? <span className="spinner"></span> : 'Unregister'}
         </button>
       );
     }
-    if (isPast) {
-      return (
-        <button disabled className="btn btn-outline btn-lg" style={btnStyle}>
-          EVENT CONCLUDED
-        </button>
-      );
-    }
+
     if (isFull) {
       return (
-        <button disabled className="btn btn-red btn-lg" style={{ ...btnStyle, opacity: 0.7 }}>
-          EVENT FULL (0 SEATS)
+        <button disabled className="btn btn-red" style={{ ...baseStyle, opacity: 0.7 }}>
+          Event Full
         </button>
       );
     }
+
     return (
       <button
         onClick={handleRegister}
         disabled={actionLoading}
-        className="btn btn-green btn-lg"
-        style={btnStyle}
+        className="btn btn-green"
+        style={baseStyle}
       >
-        {actionLoading ? <span className="spinner"></span> : '🎟️ REGISTER NOW'}
+        {actionLoading ? <span className="spinner"></span> : 'Register'}
       </button>
     );
   };
 
   return (
     <div 
-      className="container" 
+      className="container event-detail-container" 
       style={{ 
         paddingTop: 'clamp(1.5rem, 4vw, 3rem)', 
-        paddingBottom: 'clamp(5rem, 10vw, 7rem)', 
         maxWidth: 920 
       }}
     >
@@ -180,8 +208,9 @@ export const EventDetailPage = () => {
           fontWeight: 700,
           fontSize: '0.875rem', 
           color: 'var(--text)', 
-          marginBottom: '1.5rem',
+          marginBottom: '1.25rem',
           minHeight: 44,
+          touchAction: 'manipulation',
         }}
       >
         <ArrowLeft size={16} /> BACK TO EVENTS
@@ -201,7 +230,7 @@ export const EventDetailPage = () => {
         <div 
           style={{ 
             backgroundColor: 'var(--header-tint)', 
-            padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)', 
+            padding: 'clamp(1.25rem, 4vw, 2.25rem) clamp(1rem, 3vw, 2rem)', 
             borderBottom: '2px solid var(--border)',
           }}
         >
@@ -244,10 +273,10 @@ export const EventDetailPage = () => {
           <h1 
             style={{ 
               fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(1.6rem, 5vw, 2.7rem)', 
+              fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', 
               fontWeight: 700, 
               letterSpacing: '-0.02em',
-              lineHeight: 1.1, 
+              lineHeight: 1.15, 
               marginBottom: '1rem',
               color: 'var(--text)',
             }}
@@ -260,8 +289,8 @@ export const EventDetailPage = () => {
             style={{ 
               fontFamily: 'var(--font-mono)',
               color: 'var(--muted)', 
-              lineHeight: 1.7, 
-              fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', 
+              lineHeight: 1.65, 
+              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)', 
               whiteSpace: 'pre-wrap',
             }}
           >
@@ -270,8 +299,8 @@ export const EventDetailPage = () => {
         </div>
 
         {/* Details & Capacity Section */}
-        <div style={{ padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 2rem)' }}>
-          {/* Metadata Grid (Stacked list on mobile, grid on tablet/desktop) */}
+        <div style={{ padding: 'clamp(1.25rem, 4vw, 2.25rem) clamp(1rem, 3vw, 2rem)' }}>
+          {/* Metadata Grid (Stacked on mobile, grid on tablet/desktop) */}
           <div 
             style={{ 
               display: 'grid', 
@@ -290,10 +319,10 @@ export const EventDetailPage = () => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 800, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.4rem' }}>
-                <Calendar size={14} color="var(--blue)" /> DATE & TIME
+                <Calendar size={14} color="var(--blue)" /> DATE & TIME (IST)
               </div>
               <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem' }}>
-                {formatDate(event.dateTime)}
+                {formatDateTimeIST(event.dateTime, { includeYear: true, weekday: 'long' })}
               </div>
             </div>
 
@@ -332,7 +361,7 @@ export const EventDetailPage = () => {
             </div>
           </div>
 
-          {/* Capacity Progress Bar with Black Border */}
+          {/* Capacity Progress Bar */}
           <div 
             style={{ 
               padding: '1.25rem', 
@@ -363,10 +392,10 @@ export const EventDetailPage = () => {
             </div>
           </div>
 
-          {/* Desktop / Tablet Inline Action Button Section */}
+          {/* Desktop Inline Action Button Section (Hidden on mobile <768px to prevent duplicate buttons) */}
           <div 
+            className="inline-action-desktop"
             style={{ 
-              display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'center', 
               borderTop: '2px solid var(--border)', 
@@ -392,8 +421,49 @@ export const EventDetailPage = () => {
         </div>
       </div>
 
-      {/* Mobile Sticky Bottom Bar (Always reachable on phones < 640px) */}
+      {/* Mobile Sticky Bottom Bar (Visible ONLY on mobile < 768px) */}
       <div className="sticky-bottom-bar" role="region" aria-label="Quick registration actions">
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+          <span 
+            style={{ 
+              fontFamily: 'var(--font-mono)', 
+              fontSize: '0.75rem', 
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              color: isFull || isPast ? 'var(--muted)' : seatsLeftPercentage <= 30 ? 'var(--red)' : 'var(--green)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {event.isRegistered ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--green)' }}>
+                <CheckCircle2 size={13} /> CONFIRMED ATTENDEE
+              </span>
+            ) : isPast ? (
+              'EVENT CONCLUDED'
+            ) : isFull ? (
+              'EVENT FULL (0 SEATS)'
+            ) : (
+              `● ${event.seatsLeft} ${event.seatsLeft === 1 ? 'SEAT' : 'SEATS'} LEFT`
+            )}
+          </span>
+          <span 
+            style={{ 
+              fontFamily: 'var(--font-heading)', 
+              fontWeight: 700, 
+              fontSize: '0.85rem',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              color: 'var(--text)',
+            }}
+          >
+            {event.title}
+          </span>
+        </div>
+
         {renderActionButton(true)}
       </div>
     </div>

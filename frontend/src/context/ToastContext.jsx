@@ -5,9 +5,23 @@ const ToastContext = createContext(null);
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
+  const lastToastRef = React.useRef({ message: '', time: 0 });
+
   const addToast = useCallback((message, type = 'info') => {
-    const id = Date.now() + Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, message, type }]);
+    if (!message) return;
+    const now = Date.now();
+    if (lastToastRef.current.message === message && (now - lastToastRef.current.time) < 1200) {
+      return;
+    }
+    lastToastRef.current = { message, time: now };
+
+    const id = `${now}-${Math.random().toString(36).substring(2, 7)}`;
+    setToasts((prev) => {
+      if (prev.some((t) => t.message === message && t.type === type)) {
+        return prev;
+      }
+      return [...prev, { id, message, type }];
+    });
 
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));

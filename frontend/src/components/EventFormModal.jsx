@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Sparkles, AlertCircle } from 'lucide-react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { isoToISTInputString, istInputToISO } from '../utils/date';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
   const isEditing = Boolean(event);
   const { success, error } = useToast();
 
-  const toInputDateTime = (isoString) => {
-    if (!isoString) {
-      // Default to tomorrow 10:00 AM
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      d.setHours(10, 0, 0, 0);
-      return d.toISOString().slice(0, 16);
-    }
-    const d = new Date(isoString);
-    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-  };
+  // Lock body scroll cleanly while modal is displayed
+  useLockBodyScroll(true);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const [formData, setFormData] = useState({
     title: event?.title || '',
     description: event?.description || '',
-    dateTime: toInputDateTime(event?.dateTime),
+    dateTime: isoToISTInputString(event?.dateTime),
     venue: event?.venue || '',
     capacity: event?.capacity || 50,
     category: event?.category || 'Tech',
@@ -46,9 +48,11 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
       return;
     }
 
-    const eventDate = new Date(formData.dateTime);
-    if (isNaN(eventDate.getTime()) || eventDate.getTime() <= Date.now()) {
-      setFormError('Date and time must be set in the future.');
+    // Interpret input date strictly as IST (UTC+05:30)
+    const isoDateTime = istInputToISO(formData.dateTime);
+    const eventTimestamp = new Date(isoDateTime).getTime();
+    if (isNaN(eventTimestamp) || eventTimestamp <= Date.now()) {
+      setFormError('Date and time (IST) must be set in the future.');
       return;
     }
 
@@ -68,7 +72,7 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
       const payload = {
         title: formData.title.trim(),
         description: formData.description.trim(),
-        dateTime: new Date(formData.dateTime).toISOString(),
+        dateTime: isoDateTime,
         venue: formData.venue.trim(),
         capacity: capacityInt,
         category: formData.category.trim(),
@@ -94,7 +98,7 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="modal-overlay mobile-fullscreen" onClick={onClose}>
+    <div className="modal-overlay mobile-fullscreen" onClick={onClose} role="dialog" aria-modal="true">
       <div 
         className="modal-content mobile-fullscreen-content" 
         onClick={(e) => e.stopPropagation()} 
@@ -182,7 +186,7 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
 
             <div className="grid grid-cols-2" style={{ gap: '1rem' }}>
               <div className="form-group">
-                <label className="form-label">DATE & TIME (FUTURE)</label>
+                <label className="form-label">DATE & TIME (IST)</label>
                 <input
                   type="datetime-local"
                   className="input"
@@ -190,6 +194,9 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
                   onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
                   required
                 />
+                <span style={{ fontSize: '0.725rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginTop: '0.25rem' }}>
+                  Interpreted in Indian Standard Time (UTC+05:30)
+                </span>
               </div>
 
               <div className="form-group">
@@ -222,7 +229,7 @@ export const EventFormModal = ({ event = null, onClose, onSuccess }) => {
             <button type="button" onClick={onClose} className="btn btn-outline" disabled={submitting} style={{ minHeight: 44 }}>
               CANCEL
             </button>
-            <button type="submit" className="btn btn-green" disabled={submitting} style={{ minHeight: 44 }}>
+            <button type="submit" className="btn btn-green" disabled={submitting} style={{ minHeight: 44, fontWeight: 800 }}>
               {submitting ? <span className="spinner"></span> : isEditing ? 'SAVE CHANGES' : 'PUBLISH EVENT'}
             </button>
           </div>

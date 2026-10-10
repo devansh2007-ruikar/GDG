@@ -4,6 +4,7 @@ import api from '../services/api';
 import { AttendeesModal } from '../components/AttendeesModal';
 import { EventFormModal } from '../components/EventFormModal';
 import { useToast } from '../context/ToastContext';
+import { formatDateTimeIST } from '../utils/date';
 
 export const AdminPage = () => {
   const [events, setEvents] = useState([]);
@@ -69,15 +70,7 @@ export const AdminPage = () => {
     }
   };
 
-  const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  const formatDate = (dateStr) => formatDateTimeIST(dateStr, { includeYear: true, weekday: 'short' });
 
   return (
     <div className="container" style={{ padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 1.5rem) 5rem' }}>

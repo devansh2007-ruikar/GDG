@@ -1,18 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Sun, Moon, Menu, X, LogOut, User as UserIcon, Calendar, Ticket, ShieldCheck, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 export const Navbar = () => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, authLoading } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { success } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const hamburgerRef = useRef(null);
+
+  // Close mobile drawer whenever route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // Lock body scroll cleanly without layout jump
+  useLockBodyScroll(mobileMenuOpen);
 
   const handleLogout = () => {
     logout();
@@ -20,17 +30,6 @@ export const Navbar = () => {
     setMobileMenuOpen(false);
     navigate('/login');
   };
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [mobileMenuOpen]);
 
   // Close menu on Escape key
   useEffect(() => {
@@ -131,7 +130,19 @@ export const Navbar = () => {
           </button>
 
           {/* User Auth Info */}
-          {user ? (
+          {authLoading ? (
+            <div
+              style={{
+                width: 140,
+                height: 40,
+                borderRadius: 'var(--radius-btn)',
+                backgroundColor: 'var(--surface)',
+                border: '2px solid var(--border)',
+                opacity: 0.5,
+              }}
+              aria-hidden="true"
+            />
+          ) : user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div 
                 style={{
@@ -299,7 +310,19 @@ export const Navbar = () => {
 
           {/* User Auth Section */}
           <div style={{ borderTop: '2px dashed var(--border)', paddingTop: '0.85rem', marginTop: '0.25rem' }}>
-            {user ? (
+            {authLoading ? (
+              <div
+                style={{
+                  width: '100%',
+                  height: 48,
+                  borderRadius: 'var(--radius-btn)',
+                  backgroundColor: 'var(--surface)',
+                  border: '2px solid var(--border)',
+                  opacity: 0.5,
+                }}
+                aria-hidden="true"
+              />
+            ) : user ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div
                   style={{

@@ -1,53 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { X, Users } from 'lucide-react';
 import api from '../services/api';
+import { formatDateTimeIST } from '../utils/date';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 export const AttendeesModal = ({ event, onClose }) => {
   const [attendees, setAttendees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Lock body scroll cleanly while modal is displayed
+  useLockBodyScroll(true);
+
+  // Close on Escape key
   useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  useEffect(() => {
+    let isMounted = true;
     const fetchAttendees = async () => {
       try {
         const res = await api.get(`/events/${event.id}/registrations`);
-        if (res.data.success) {
+        if (res.data.success && isMounted) {
           setAttendees(res.data.data);
         }
       } catch (err) {
-        setErrorMsg(err.response?.data?.error?.message || 'Failed to fetch attendees');
+        if (isMounted) {
+          setErrorMsg(err.response?.data?.error?.message || 'Failed to fetch attendees');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchAttendees();
+    return () => {
+      isMounted = false;
+    };
   }, [event.id]);
 
-  const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  const formatDate = (dateStr) => formatDateTimeIST(dateStr, { includeYear: true, weekday: 'short' });
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Event Attendees Modal">
       <div 
         className="modal-content" 
         onClick={(e) => e.stopPropagation()} 
         style={{ 
           maxWidth: 'min(680px, 94vw)',
+          maxHeight: 'min(90vh, 700px)',
+          display: 'flex',
+          flexDirection: 'column',
           padding: 'clamp(1rem, 4vw, 2rem)',
           border: '3px solid var(--border)',
           boxShadow: 'var(--shadow-lg)',
           borderRadius: 0,
         }}
       >
-        <div className="modal-header" style={{ borderBottom: '2px solid var(--border)' }}>
+        <div className="modal-header" style={{ borderBottom: '2px solid var(--border)', flexShrink: 0 }}>
           <div>
             <h2 style={{ fontSize: 'clamp(1.2rem, 3.5vw, 1.5rem)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
               Event Attendees
@@ -67,101 +84,103 @@ export const AttendeesModal = ({ event, onClose }) => {
           </button>
         </div>
 
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-            <span className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
-            <p style={{ marginTop: '1rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              Loading attendee list...
-            </p>
-          </div>
-        ) : errorMsg ? (
-          <div className="alert-box alert-error" style={{ marginBottom: '1.5rem' }}>
-            {errorMsg}
-          </div>
-        ) : attendees.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>👥</div>
-            <p>No members have registered for this event yet.</p>
-          </div>
-        ) : (
-          <div>
-            <div 
-              style={{ 
-                marginBottom: '1rem', 
-                fontFamily: 'var(--font-mono)', 
-                fontSize: '0.85rem', 
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              <Users size={16} color="var(--blue)" />
-              <span>CONFIRMED GUEST ROSTER ({attendees.length})</span>
+        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingTop: '1rem' }}>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+              <span className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
+              <p style={{ marginTop: '1rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+                Loading attendee list...
+              </p>
             </div>
+          ) : errorMsg ? (
+            <div className="alert-box alert-error" style={{ marginBottom: '1.5rem' }}>
+              {errorMsg}
+            </div>
+          ) : attendees.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>👥</div>
+              <p>No members have registered for this event yet.</p>
+            </div>
+          ) : (
+            <div>
+              <div 
+                style={{ 
+                  marginBottom: '1rem', 
+                  fontFamily: 'var(--font-mono)', 
+                  fontSize: '0.85rem', 
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                }}
+              >
+                <Users size={16} color="var(--blue)" />
+                <span>CONFIRMED GUEST ROSTER ({attendees.length})</span>
+              </div>
 
-            {/* Desktop Table View */}
-            <div className="desktop-table-view">
-              <div className="table-container" style={{ maxHeight: 360, overflowY: 'auto' }}>
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>NAME</th>
-                      <th>EMAIL</th>
-                      <th>REGISTERED AT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {attendees.map((attendee, index) => (
-                      <tr key={attendee.registrationId || index}>
-                        <td>{index + 1}</td>
-                        <td style={{ fontWeight: 700 }}>{attendee.name}</td>
-                        <td style={{ color: 'var(--muted)' }}>{attendee.email}</td>
-                        <td style={{ fontSize: '0.8rem' }}>
-                          {formatDate(attendee.registeredAt)}
-                        </td>
+              {/* Desktop Table View */}
+              <div className="desktop-table-view">
+                <div className="table-container" style={{ maxHeight: 360, overflowY: 'auto' }}>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>NAME</th>
+                        <th>EMAIL</th>
+                        <th>REGISTERED AT (IST)</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {attendees.map((attendee, index) => (
+                        <tr key={attendee.registrationId || index}>
+                          <td>{index + 1}</td>
+                          <td style={{ fontWeight: 700 }}>{attendee.name}</td>
+                          <td style={{ color: 'var(--muted)' }}>{attendee.email}</td>
+                          <td style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                            {formatDate(attendee.registeredAt)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Mobile Cards View */}
+              <div className="mobile-cards-view" style={{ maxHeight: 360, overflowY: 'auto', paddingRight: 2 }}>
+                {attendees.map((attendee, index) => (
+                  <div
+                    key={attendee.registrationId || index}
+                    style={{
+                      padding: '0.85rem 1rem',
+                      backgroundColor: 'var(--bg)',
+                      border: '2px solid var(--border)',
+                      boxShadow: 'var(--shadow-sm)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.35rem',
+                      fontFamily: 'var(--font-mono)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 800, fontSize: '0.925rem', color: 'var(--text)' }}>
+                        #{index + 1} {attendee.name}
+                      </span>
+                      <span style={{ fontSize: '0.725rem', color: 'var(--muted)' }}>
+                        {formatDate(attendee.registeredAt)}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--muted)', wordBreak: 'break-all' }}>
+                      {attendee.email}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
+          )}
+        </div>
 
-            {/* Mobile Cards View */}
-            <div className="mobile-cards-view" style={{ maxHeight: 360, overflowY: 'auto', paddingRight: 2 }}>
-              {attendees.map((attendee, index) => (
-                <div
-                  key={attendee.registrationId || index}
-                  style={{
-                    padding: '0.85rem 1rem',
-                    backgroundColor: 'var(--bg)',
-                    border: '2px solid var(--border)',
-                    boxShadow: 'var(--shadow-sm)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.35rem',
-                    fontFamily: 'var(--font-mono)',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 800, fontSize: '0.925rem', color: 'var(--text)' }}>
-                      #{index + 1} {attendee.name}
-                    </span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
-                      {formatDate(attendee.registeredAt)}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--muted)', wordBreak: 'break-all' }}>
-                    {attendee.email}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.75rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.25rem', flexShrink: 0, borderTop: '2px solid var(--border)', paddingTop: '1rem' }}>
           <button type="button" onClick={onClose} className="btn btn-outline" style={{ minHeight: 44, minWidth: 100, justifyContent: 'center' }}>
             DONE
           </button>

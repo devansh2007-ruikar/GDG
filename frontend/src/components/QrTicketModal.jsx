@@ -1,66 +1,80 @@
 import React, { useState, useEffect } from 'react';
 import { Printer, X, CheckCircle } from 'lucide-react';
 import api from '../services/api';
+import { formatDateTimeIST } from '../utils/date';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 
 export const QrTicketModal = ({ registration, onClose }) => {
   const [ticketData, setTicketData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Lock body scroll cleanly while modal is displayed
+  useLockBodyScroll(true);
+
+  // Close on Escape key
   useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  useEffect(() => {
+    let isMounted = true;
     const fetchQrCode = async () => {
       try {
         const res = await api.get(`/registrations/${registration.id}/qr`);
-        if (res.data.success) {
+        if (res.data.success && isMounted) {
           setTicketData(res.data.data);
         }
       } catch (err) {
-        setErrorMsg(err.response?.data?.error?.message || 'Failed to generate ticket QR code');
+        if (isMounted) {
+          setErrorMsg(err.response?.data?.error?.message || 'Failed to generate ticket QR code');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchQrCode();
+    return () => {
+      isMounted = false;
+    };
   }, [registration.id]);
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    return new Date(dateStr).toLocaleString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  const formatDate = (dateStr) => formatDateTimeIST(dateStr, { includeYear: true, weekday: 'short' });
 
   const handlePrint = () => {
     window.print();
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Digital Admission Pass">
       <div 
         className="modal-content print-ticket-area" 
         onClick={(e) => e.stopPropagation()} 
         style={{ 
           maxWidth: 'min(480px, 94vw)', 
+          maxHeight: 'min(92vh, 680px)',
+          overflowY: 'auto',
           textAlign: 'center',
           border: '2px solid var(--border)',
           boxShadow: 'var(--shadow-lg)',
           borderRadius: 0,
-          padding: 'clamp(1.25rem, 4vw, 2rem)',
+          padding: 'clamp(1rem, 4vw, 1.75rem)',
         }}
       >
         {/* Header */}
         <div className="modal-header" style={{ marginBottom: '1.25rem', borderBottom: '2px solid var(--border)', paddingBottom: '0.85rem' }}>
           <div style={{ textAlign: 'left' }}>
-            <h2 style={{ fontSize: 'clamp(1.25rem, 4vw, 1.5rem)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            <h2 style={{ fontSize: 'clamp(1.2rem, 4vw, 1.45rem)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
               Digital Admission Pass
             </h2>
-            <p style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+            <p style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)', marginTop: '0.2rem' }}>
               OFFICIAL GDG EVENT TICKET
             </p>
           </div>
@@ -68,7 +82,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
             type="button"
             onClick={onClose} 
             className="btn btn-outline" 
-            style={{ minWidth: 44, minHeight: 44, padding: 0 }}
+            style={{ minWidth: 44, minHeight: 44, padding: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             aria-label="Close ticket pass"
           >
             <X size={20} />
@@ -99,16 +113,16 @@ export const QrTicketModal = ({ registration, onClose }) => {
                 border: '2px solid var(--border)',
                 boxShadow: 'var(--shadow-sm)',
                 borderRadius: 0,
-                padding: 'clamp(1rem, 3vw, 1.5rem)',
+                padding: 'clamp(0.85rem, 3vw, 1.25rem)',
                 marginBottom: '1.25rem',
               }}
             >
               {/* Category & Title */}
-              <div style={{ marginBottom: '0.85rem' }}>
-                <span className="badge badge-tech" style={{ marginBottom: '0.5rem' }}>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <span className="badge badge-tech" style={{ marginBottom: '0.4rem' }}>
                   {ticketData.event.category}
                 </span>
-                <h3 style={{ fontSize: 'clamp(1.15rem, 3.5vw, 1.4rem)', fontWeight: 700, lineHeight: 1.1, color: 'var(--text)' }}>
+                <h3 style={{ fontSize: 'clamp(1.1rem, 3.5vw, 1.35rem)', fontWeight: 700, lineHeight: 1.15, color: 'var(--text)' }}>
                   {ticketData.event.title}
                 </h3>
               </div>
@@ -122,7 +136,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
                   display: 'flex', 
                   flexDirection: 'column', 
                   gap: '0.35rem',
-                  marginBottom: '1rem',
+                  marginBottom: '0.85rem',
                   padding: '0.65rem',
                   backgroundColor: 'var(--surface)',
                   border: '1px solid var(--border)',
@@ -134,7 +148,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
                 <div>📍 <strong>{ticketData.event.venue}</strong></div>
               </div>
 
-              {/* QR Code Container with High-Contrast Sharp Border (Max 70vw) */}
+              {/* QR Code Container with High-Contrast Sharp Border */}
               <div 
                 style={{
                   display: 'inline-block',
@@ -143,7 +157,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
                   border: '2px solid #000000',
                   boxShadow: 'var(--shadow-sm)',
                   borderRadius: 0,
-                  marginBottom: '1rem',
+                  marginBottom: '0.85rem',
                   maxWidth: '100%',
                 }}
               >
@@ -152,8 +166,8 @@ export const QrTicketModal = ({ registration, onClose }) => {
                   alt="Registration QR Code" 
                   style={{ 
                     display: 'block', 
-                    width: 'min(190px, 65vw)', 
-                    height: 'min(190px, 65vw)',
+                    width: 'min(180px, 60vw)', 
+                    height: 'min(180px, 60vw)',
                     maxWidth: '100%',
                     aspectRatio: '1/1',
                   }} 
@@ -164,13 +178,13 @@ export const QrTicketModal = ({ registration, onClose }) => {
               <div 
                 style={{ 
                   borderTop: '2px dashed var(--border)', 
-                  paddingTop: '0.85rem', 
+                  paddingTop: '0.75rem', 
                   textAlign: 'left',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.8rem',
+                  fontSize: '0.785rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.35rem',
+                  gap: '0.3rem',
                   wordBreak: 'break-word',
                 }}
               >
@@ -193,7 +207,7 @@ export const QrTicketModal = ({ registration, onClose }) => {
               {/* Checkmark */}
               <div 
                 style={{ 
-                  marginTop: '0.85rem', 
+                  marginTop: '0.75rem', 
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.75rem', 
                   fontWeight: 700,
